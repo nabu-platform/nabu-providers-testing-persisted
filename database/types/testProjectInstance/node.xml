@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.types.structure.StructureManager" created="2023-03-24T10:32:06.821+01:00" lastModified="2023-03-24T13:09:48.616+01:00" leaf="true" version="4">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>java.util.UUID</references>
+    <references>nabu.providers.testing.persisted.database.types.testProject</references>
+    <references>java.util.Date</references>
+    <references>java.lang.String</references>
+    <references>java.lang.Long</references>
+</node>

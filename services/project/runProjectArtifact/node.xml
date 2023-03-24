@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.services.vm.VMServiceManager" created="2023-03-24T13:03:47.184+01:00" lastModified="2023-03-24T13:22:04.655+01:00" leaf="true" version="31">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>nabu.providers.testing.persisted.crud.testProjectInstance.types.createOutput</references>
+    <references>nabu.utils.reflection.Service.invoke</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstance.services.create</references>
+    <references>nabu.providers.testing.persisted.crud.testCase.types.output</references>
+    <references>nabu.providers.testing.persisted.crud.testCase.services.list</references>
+    <references>nabu.utils.String.join</references>
+    <references>nabu.providers.testing.persisted.crud.testProject.types.output</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.create</references>
+    <references>java.lang.Long</references>
+    <references>nabu.providers.testing.persisted.crud.testProjectInstance.services.create</references>
+    <references>java.lang.String</references>
+    <references>nabu.utils.types.NodeDescription</references>
+    <references>nabu.utils.reflection.Type.get</references>
+    <references>nabu.providers.testing.persisted.crud.testCase.services.create</references>
+    <references>nabu.utils.Date.now</references>
+    <references>nabu.utils.reflection.Node.get</references>
+    <references>nabu.utils.reflection.Type.set</references>
+    <references>nabu.providers.testing.persisted.crud.testProject.services.create</references>
+    <references>nabu.providers.testing.persisted.crud.testProject.services.list</references>
+    <references>nabu.utils.Server.getServerName</references>
+    <references>be.nabu.eai.module.services.glue.testing.project.GlueTestProjectArtifact$GlueTestProjectOutput</references>
+    <references>nabu.utils.reflection.Type.newInstance</references>
+    <references>nabu.services.jdbc.Services.update</references>
+    <references>nabu.utils.String.replace</references>
+    <references>nabu.utils.Math.sum</references>
+    <references>java.lang.Object</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstance.types.createOutput</references>
+</node>

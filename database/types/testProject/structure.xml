@@ -1,0 +1,8 @@
+<structure collectionName="testProjects" name="testProject">
+    <field name="id" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" primaryKey="true" type="java.util.UUID"/>
+    <field name="name" type="java.lang.String"/>
+    <field comment="The namespace + name of the project" minOccurs="0" name="projectId" type="java.lang.String"/>
+    <field minOccurs="0" name="lastRun" timezone="UTC" type="java.util.Date"/>
+    <field minOccurs="0" name="maxScriptRuntime" type="java.lang.Long"/>
+    <field name="enabled" type="java.lang.Boolean"/>
+</structure>

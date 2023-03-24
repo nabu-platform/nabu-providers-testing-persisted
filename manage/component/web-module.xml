@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<webModule>
+    <webFragments>nabu.providers.testing.persisted.crud.testCase</webFragments>
+    <webFragments>nabu.providers.testing.persisted.crud.testProject</webFragments>
+    <webFragments>nabu.providers.testing.persisted.crud.testCaseInstance.services.list</webFragments>
+    <webFragments>nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.list</webFragments>
+    <webFragments>nabu.providers.testing.persisted.crud.testProjectInstance.services.list</webFragments>
+</webModule>

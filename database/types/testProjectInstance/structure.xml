@@ -1,0 +1,11 @@
+<structure collectionName="testProjectInstances" name="testProjectInstance">
+    <field name="id" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" primaryKey="true" type="java.util.UUID"/>
+    <field foreignKey="nabu.providers.testing.persisted.database.types.testProject:id" name="testProjectId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field name="started" timezone="UTC" type="java.util.Date"/>
+    <field minOccurs="0" name="stopped" timezone="UTC" type="java.util.Date"/>
+    <field minOccurs="0" name="severity" type="java.lang.String"/>
+    <field minOccurs="0" name="amountRun" type="java.lang.Long"/>
+    <field minOccurs="0" name="amountSuccessful" type="java.lang.Long"/>
+    <field minOccurs="0" name="amountError" type="java.lang.Long"/>
+    <field comment="The server that ran this" minOccurs="0" name="serverOwner" type="java.lang.String"/>
+</structure>

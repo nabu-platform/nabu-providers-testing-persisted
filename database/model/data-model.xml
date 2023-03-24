@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dataModel>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testProject</type>
+        <x>266</x>
+        <y>71</y>
+    </entries>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testProjectInstance</type>
+        <x>852</x>
+        <y>98</y>
+    </entries>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testCase</type>
+        <x>348</x>
+        <y>314</y>
+    </entries>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testCaseInstance</type>
+        <x>877</x>
+        <y>441</y>
+    </entries>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testCaseInstanceValidation</type>
+        <x>1388</x>
+        <y>542</y>
+    </entries>
+</dataModel>

@@ -1,0 +1,87 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="9b52f32aef0d46cd90e3b30e00e12713"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="54de7e178abc436cbb5c3b88b1fb1174"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="0cfe7efecbdb454bbf4373183f10d8dc"
+				serviceId="nabu.providers.testing.persisted.crud.testProject.services.get"
+				resultName="result2fa4a8b032804c7c9ac3c95e9b4a90df"
+				temporaryMapping="true"
+				x="30"
+				y="100"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="54f699d51f1843e5861a64f55a8331f6"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/path/testProjectId</from>
+				<to>id</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="cf41fbed200b4c4cb93bae6f91623c5d"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result2fa4a8b032804c7c9ac3c95e9b4a90df/result</from>
+			<to>project</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Throw"
+			disabled="false"
+			id="76fd92a3e95a4d33ac77fd8f37b1eb1d"
+			label="!project"
+			lineNumber="3"
+			code="404" xsi:nil="true"/>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Throw"
+			disabled="false"
+			id="67b14ce726034f61b239937145ad4a12"
+			label="project/projectId == null"
+			lineNumber="4"
+			message="Dynamic projects are not yet supported" xsi:nil="true"/>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="76bc598e295b4170a496927634d59f98"
+			lineNumber="5">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="fd5209dab533420690f8b4ddb1ac6f9c"
+				serviceId="nabu.providers.testing.persisted.services.project.runProjectArtifact"
+				resultName="resultbbe5dcd8c96940c7bc27427383e2cd3e"
+				temporaryMapping="true"
+				x="185"
+				y="68"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="81e0c6e0d3fc4e3588f95df3923371a4"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>project/projectId</from>
+				<to>testProjectId</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="ca5f5b22f79d4889aaf0762c0c7fe1ce"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>project/maxScriptRuntime</from>
+				<to>maxScriptRuntime</to>
+			</steps>
+		</steps>
+	</steps>
+</sequence>

@@ -1,0 +1,17 @@
+<structure name="pipeline">
+    <structure name="input">
+        <field name="testProjectId" type="java.lang.String"/>
+        <field minOccurs="0" name="maxScriptRuntime" type="java.lang.Long"/>
+    </structure>
+    <structure name="output"/>
+    <structure definition="be.nabu.eai.module.services.glue.testing.project.GlueTestProjectArtifact$GlueTestProjectOutput" minOccurs="0" name="result"/>
+    <structure definition="java.lang.Object" minOccurs="0" name="projectInput"/>
+    <structure collectionName="testProjects" definition="nabu.providers.testing.persisted.crud.testProject.types.output" minOccurs="0" name="existing"/>
+    <structure collectionName="testProjectInstances" definition="nabu.providers.testing.persisted.crud.testProjectInstance.types.createOutput" name="instance"/>
+    <structure collectionName="testCases" definition="nabu.providers.testing.persisted.crud.testCase.types.output" maxOccurs="unbounded" minOccurs="0" name="testCases"/>
+    <structure collectionName="testCases" definition="nabu.providers.testing.persisted.crud.testCase.types.output" minOccurs="0" name="testCase"/>
+    <structure definition="nabu.utils.types.NodeDescription" minOccurs="0" name="node"/>
+    <field name="testId" type="java.lang.String"/>
+    <field name="group" type="java.lang.String"/>
+    <structure collectionName="testCaseInstances" definition="nabu.providers.testing.persisted.crud.testCaseInstance.types.createOutput" name="testCaseInstance"/>
+</structure>
