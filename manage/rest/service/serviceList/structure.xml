@@ -1,0 +1,4 @@
+<structure name="serviceList">
+    <structure definition="nabu.providers.testing.persisted.manage.rest.service.service" maxOccurs="unbounded" minOccurs="0" name="results"/>
+    <structure definition="nabu.services.jdbc.types.Page" minOccurs="0" name="page"/>
+</structure>

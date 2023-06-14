@@ -1,0 +1,9 @@
+<structure name="service">
+    <field name="id" type="java.lang.String"/>
+    <field minOccurs="0" name="inputDefinition" type="java.lang.String"/>
+    <field minOccurs="0" name="outputDefinition" type="java.lang.String"/>
+    <field minOccurs="0" name="comment" type="java.lang.String"/>
+    <field maxOccurs="unbounded" minOccurs="0" name="tags" type="java.lang.String"/>
+    <field minOccurs="0" name="summary" type="java.lang.String"/>
+    <field minOccurs="0" name="description" type="java.lang.String"/>
+</structure>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.services.vm.VMServiceManager" created="2023-03-24T13:03:47.184+01:00" lastModified="2023-03-24T13:22:04.655+01:00" leaf="true" version="31">
+<node artifactManager="be.nabu.eai.module.services.vm.VMServiceManager" created="2023-03-24T13:03:47.184+01:00" lastModified="2023-03-24T14:48:18.282+01:00" leaf="true" version="37">
     <environmentId>apollo</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
     <properties/>
+    <references>nabu.utils.List.add</references>
     <references>nabu.providers.testing.persisted.crud.testProjectInstance.types.createOutput</references>
     <references>nabu.utils.reflection.Service.invoke</references>
     <references>nabu.providers.testing.persisted.crud.testCaseInstance.services.create</references>
@@ -13,6 +14,7 @@
     <references>nabu.providers.testing.persisted.crud.testProject.types.output</references>
     <references>nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.create</references>
     <references>java.lang.Long</references>
+    <references>nabu.utils.Runtime.setServiceContext</references>
     <references>nabu.providers.testing.persisted.crud.testProjectInstance.services.create</references>
     <references>java.lang.String</references>
     <references>nabu.utils.types.NodeDescription</references>

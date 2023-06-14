@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-13T15:33:50.910+02:00" lastModified="2023-06-13T16:03:03.190+02:00" leaf="true" version="18">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>nabu.utils.types.ServiceDescription</references>
+    <references>nabu.utils.List.sort</references>
+    <references>nabu.web.swagger.Services.formatAsJsonSchema</references>
+    <references>nabu.providers.testing.persisted.manage.rest.service.serviceList</references>
+    <references>nabu.utils.reflection.Node.services</references>
+    <references>nabu.utils.Math.multiply</references>
+    <references>nabu.utils.Math.sum</references>
+    <references>nabu.utils.List.getAll</references>
+</node>

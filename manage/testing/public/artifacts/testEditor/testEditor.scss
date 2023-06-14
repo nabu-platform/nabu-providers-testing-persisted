@@ -1,0 +1,32 @@
+.is-test-editor {
+	.is-description-wrapper {
+		background-color: white;
+		padding: 0.3rem 0.7rem;
+		border: solid 1px #ccc;
+		border-radius: 5px;
+	}
+	.is-depth0 {
+		
+	}
+	.is-depth1 {
+		margin-left: 5rem;
+	}
+	.is-depth2 {
+		margin-left: 10rem;
+	}
+	.is-type-title {
+		font-weight: bold;
+		&.is-depth0 {
+			font-size: $font-size-xlarge;
+		}
+		&.is-depth1 {
+			font-size: $font-size-large;
+		}
+	}
+	.automation-script {
+		min-width: 400px;
+		font-family: Monospace;
+		font-size: $font-size-xsmall;
+		border: solid 1px #CCC;
+	}
+}

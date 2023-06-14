@@ -46,6 +46,10 @@
         <input>true</input>
         <vary>false</vary>
     </filters>
+    <foreignFields>
+        <foreignName>testCaseId:testId</foreignName>
+        <localName>testId</localName>
+    </foreignFields>
     <getPermission>testInstance.list</getPermission>
     <hooks>false</hooks>
     <listPermission>testInstance.list</listPermission>

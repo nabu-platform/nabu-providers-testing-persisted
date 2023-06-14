@@ -1,0 +1,5 @@
+<structure interface="nabu.providers.testing.persisted.manage.rest.service.list:api" name="pipeline">
+    <structure name="input"/>
+    <structure name="output"/>
+    <structure definition="nabu.utils.types.ServiceDescription" maxOccurs="unbounded" minOccurs="0" name="services"/>
+</structure>

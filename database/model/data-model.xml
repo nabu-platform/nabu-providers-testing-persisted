@@ -3,31 +3,43 @@
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testProject</type>
-        <x>266</x>
-        <y>71</y>
+        <x>111</x>
+        <y>35</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testProjectInstance</type>
-        <x>852</x>
-        <y>98</y>
+        <x>627</x>
+        <y>36</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCase</type>
-        <x>348</x>
-        <y>314</y>
+        <x>119</x>
+        <y>269</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstance</type>
-        <x>877</x>
-        <y>441</y>
+        <x>645</x>
+        <y>328</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstanceValidation</type>
-        <x>1388</x>
-        <y>542</y>
+        <x>1162</x>
+        <y>216</y>
+    </entries>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testCaseStep</type>
+        <x>135</x>
+        <y>523</y>
+    </entries>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testCaseInstanceStep</type>
+        <x>647</x>
+        <y>715</y>
     </entries>
 </dataModel>
