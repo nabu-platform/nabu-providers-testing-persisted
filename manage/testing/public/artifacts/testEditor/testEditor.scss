@@ -50,6 +50,35 @@
 		background-color: #f9f9f9;
 		padding: $spacing-scale-medium $spacing-scale-large;
 	}
+	.is-description-container:not(.is-disabled) {
+		border-left: solid 5px $color-primary-base;
+		border-right: solid 5px $color-primary-base;
+		background: linear-gradient(90deg, $color-primary-lightest 0%, white 50%, $color-primary-lightest 100%);
+	}
+	.is-description-container.is-disabled {
+		border-left: solid 5px $color-neutral-base;
+		border-right: solid 5px $color-neutral-base;
+		background: linear-gradient(90deg, $color-neutral-lighter 0%, white 50%, $color-neutral-lighter 100%);
+	}
+	tbody tr:not(.is-disabled):hover {
+		background-color: $color-secondary-lightest;
+	}
+	.is-badge {
+		white-space: nowrap;
+	}
+	.is-result {
+		padding: 0.5rem;
+		justify-content: center;
+		&.is-color-danger-outline {
+			background-color: $color-danger-lightest;
+		}
+		&.is-color-warning-outline {
+			background-color: $color-warning-lightest;
+		}
+		&.is-color-success-outline {
+			background-color: $color-success-lightest;
+		}
+	}
 }
 
 .is-variant-glue-script {
@@ -68,7 +97,7 @@
 
 @mixin form-component_label_horizontal {
 	display: flex;
-	flex-wrap: wrap;
+	//flex-wrap: wrap;
 	.is-label-wrapper {
 		display: flex;
 		padding: 0 $spacing-scale-medium;
@@ -80,8 +109,12 @@
 		border-bottom-left-radius: $border-radius;
 		white-space: nowrap;
 	}
+	input {
+		min-width: 15rem;
+	}
 	.is-content-wrapper {
 		flex-grow: 1;
+		white-space: nowrap;
 		input {
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;

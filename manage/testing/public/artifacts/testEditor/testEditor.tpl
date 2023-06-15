@@ -3,10 +3,11 @@
 		<ul class="is-menu is-variant-toolbar">
 			<li class="is-column"><button class="is-button is-size-small is-variant-primary-outline" @click="save"><icon name="save"/><span class="is-text">Save</span></button></li>
 			<li class="is-column"><button class="is-button is-size-small is-variant-secondary-outline" @click="showGlue = true"><icon name="search"/><span class="is-text">Raw</span></button></li>
-			<li class="is-column"><button :disabled="manual" class="is-button is-size-small is-variant-primary" @click="runScript"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
-			<li class="is-column"><button :disabled="manual || matrix.length == 0 || variables.length == 0" class="is-button is-size-small is-variant-danger" @click="runMatrix"><icon name="play"/><span class="is-text">Run Matrix</span></button></li>
-			<li class="is-column"><button :disabled="manual" class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
 			<li class="is-column"><button class="is-button is-size-small" @click="showConfiguration = true"><icon name="cog"/><span class="is-text">Configure</span></button></li>
+			<li class="is-column"><button v-if="!manual" class="is-button is-size-small is-variant-primary" @click="runScript(false)"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
+			<li class="is-column"><button v-if="!manual" :disabled="matrix.length == 0 || variables.length == 0" class="is-button is-size-small is-variant-danger" @click="runMatrix"><icon name="play"/><span class="is-text">Run Matrix</span></button></li>
+			<li class="is-column"><button v-if="!manual" class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
+			<li class="is-column"><button v-if="manual" class="is-button is-size-small is-variant-danger" @click="stopManual"><icon name="stop"/><span class="is-text">Stop Manual</span></button></li>
 		</ul>
 		<n-form mode="component">
 			<table class="is-table">
@@ -14,16 +15,16 @@
 					<tr>
 						<th class="is-border-none"></th>
 						<th title="line number"></th>
-						<th>Description</th>
+						<th class="is-description-container">Description</th>
 						<th v-if="showAutomation"><div class="is-row is-spacing-gap-medium is-align-cross-center"><span class="is-text">Automation</span><n-form-switch v-model="showAllServices"/></div></th>
-						<th v-for="result in results">{{result.runType}} ({{$services.formatter.date(result.started, 'yyyy-MM-dd')}})</th>
+						<th v-for="result in results"><div class="is-column is-spacing-gap-xsmall"><span class="is-title">{{result.runType}}</span><span class="is-content is-variant-subscript">{{$services.formatter.date(result.started, 'yyyy-MM-dd HH:mm:ss')}}</span></div></th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="(step, index) in steps" :key="step.id" class="step" :class="{'is-disabled': !step.enabled}">
 						<td class="is-border-none"><div class="is-column"><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, -1)"><icon name="chevron-up"/></button><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, 1)"><icon name="chevron-down"/></button></div></td>
 						<td><div class="is-row is-spacing-small is-align-center"><button class="is-button is-variant-ghost is-size-xsmall" @click="addAfter(index)"><icon name="plus"/></button><span class="is-text is-line-number">{{formatLineNumber(index)}}</span><n-form-switch class="is-size-small" v-model="step.enabled"/><button class="is-button is-variant-ghost is-size-xsmall" @click="remove(step)"><icon class="is-color-danger-outline" name="times"/></button></div></td>
-						<td><div :class="['is-depth' + step.depth, 'is-type-' + step.type]" class="is-content-wrapper is-description-wrapper"><div :key="step.id" ref="editors" 
+						<td :class="{'is-disabled': !step.enabled}" class="is-description-container"><div :class="['is-depth' + step.depth, 'is-type-' + step.type]" class="is-content-wrapper is-description-wrapper"><div :key="step.id" ref="editors" 
 							:step-id="step.id"
 							@keydown.enter.ctrl="addAfter(index)" 
 							@keydown.tab="tab(step, $event)" 
@@ -96,9 +97,14 @@
 							</div>
 						</td>
 						<td v-for="result in results">
-							<icon class="is-spacing-xsmall" v-if="getResult(result, step)" :name="getResult(result, step).severity == 'INFO' ? 'check' : (getResult(result, step).severity == 'WARNING' ? 'question-circle' : 'times')" :class="{'is-color-success-outline': getResult(result, step).severity == 'INFO', 'is-color-warning-outline': getResult(result, step).severity == 'WARNING', 'is-color-danger-outline': getResult(result, step).severity == 'ERROR' }"/>
-							<icon v-else-if="result.runType != 'manual'" name="question-circle" class="is-color-warning-outline"/>
-							<ul class="is-menu is-variant-toolbar" v-else-if="result.runType == 'manual' && isCurrentManualStep(result, step)">
+							<div v-if="getResult(result, step)" class="is-row is-spacing-gap-small is-result" :class="{'is-color-success-outline': getResult(result, step).severity == 'INFO', 'is-color-warning-outline': getResult(result, step).severity == 'WARNING', 'is-color-danger-outline': getResult(result, step).severity == 'ERROR' }">
+								<icon class="is-spacing-xsmall is-size-xsmall" :name="getResult(result, step).severity == 'INFO' ? 'check' : (getResult(result, step).severity == 'WARNING' ? 'question' : 'times')" />
+								<span class="is-badge" v-if="getResult(result, step).stopped">{{new Date(getResult(result, step).stopped).getTime() - new Date(getResult(result, step).started).getTime()}} ms</span>
+							</div>
+							<div v-else-if="result.runType != 'manual'" class="is-row is-result is-color-warning-outline">
+								<icon name="question" class="is-spacing-xsmall is-size-xsmall"/>
+							</div>
+							<ul class="is-menu is-variant-toolbar" v-else-if="result.runType == 'manual' && isCurrentManualStep(result, step) && !result.stopped">
 								<li class="is-column"><button class="is-button is-size-small is-variant-success-outline" @click="setResult(result, step, 'INFO')"><icon name="check"/><span class="is-text">Succeeded</span></button></li>
 								<li class="is-column"><button class="is-button is-size-small is-variant-danger-outline" @click="setResult(result, step, 'ERROR')"><icon name="times"/><span class="is-text">Failed</span></button></li>
 								<li class="is-column"><button class="is-button is-size-small is-variant-warning-outline" @click="setResult(result, step, 'WARNING')"><icon name="chevron-down"/><span class="is-text">Ignored</span></button></li>

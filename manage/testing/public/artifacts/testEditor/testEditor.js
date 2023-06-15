@@ -140,12 +140,16 @@ Vue.view("test-editor", {
 				severity: severity
 			});
 			if (this.steps.indexOf(step) >= this.steps.length - 1) {
-				manual.stopped = new Date();
+				this.stopManual();
 			}
+		},
+		stopManual: function() {
+			this.manual.stopped = new Date();
 			this.manual = null;
 		},
 		runManual: function() {
 			this.manual = {
+				testCaseId: this.testCaseId,
 				runType: "manual",
 				started: new Date(),
 				steps: []
@@ -162,7 +166,7 @@ Vue.view("test-editor", {
 					x.results.forEach(function(result) {
 						if (result.log) {
 							var lastResult = JSON.parse(x.results[0].log);
-							lastResult.runType = "quickRun";
+							lastResult.runType = matrix ? "matrixRun" : "quickRun";
 							self.results.unshift(lastResult);
 						}
 					})

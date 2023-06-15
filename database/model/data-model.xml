@@ -21,14 +21,14 @@
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstance</type>
-        <x>645</x>
-        <y>328</y>
+        <x>798</x>
+        <y>342</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstanceValidation</type>
-        <x>1162</x>
-        <y>216</y>
+        <x>1430</x>
+        <y>221</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
