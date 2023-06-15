@@ -1,0 +1,5 @@
+<structure interface="$self:api" name="pipeline">
+    <structure name="input"/>
+    <structure name="output"/>
+    <structure collectionName="testCases" definition="nabu.providers.testing.persisted.crud.testCase.types.output" name="testCase"/>
+</structure>

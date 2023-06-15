@@ -1,0 +1,109 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="21e1405952c94bd2bc59e232baffac3a"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="dca97e06b77841c3a6096eeb3e92b98a"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="bbde160ff8374f5b84e2ac85995213cc"
+				serviceId="nabu.providers.testing.persisted.crud.testCaseStep.services.list"
+				resultName="resultfc798918d8ed4978af38adee051a6dea"
+				temporaryMapping="true"
+				x="97"
+				y="82"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="b01a89f6efc6432da599883d2634a86e"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/path/testCaseId</from>
+				<to>filter/testCaseId[0]</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="f956a20ee8d24c1e8fe707551dcfb53c"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>resultfc798918d8ed4978af38adee051a6dea/results</from>
+			<to>existing</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			comment="Get the ones to delete"
+			disabled="false"
+			id="b4a52d43167f4eb2bde1f69d64715e32"
+			lineNumber="3">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="67db659dea01443e96136e749275c901"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>existing[id !# /input/content/steps/id]</from>
+			<to>toDelete</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="6d4c12345d7042fe896ba9d94a8c4ef2"
+			label="input/content/steps"
+			lineNumber="4">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="58022c499ed64bb5a0328a03e49bfa8f"
+				serviceId="nabu.services.jdbc.Services.merge"
+				resultName="result074fd443ffc34ce881a32d14afa247c3"
+				temporaryMapping="true"
+				x="285"
+				y="120"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="ffcf31feafc246bb9364cc1de1709dc4"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content/steps</from>
+				<to>instances</to>
+			</steps>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="e807d100fad64a97a2412d26387bc4b0"
+			label="toDelete"
+			lineNumber="5">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="71f3ab0855c94592b10db5fe3f342365"
+				serviceId="nabu.services.jdbc.Services.delete"
+				resultName="result6de42b8b6c1b47c093bd580f70a1a588"
+				temporaryMapping="true"
+				x="80"
+				y="72"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="7a21ef5fed25406c81364836b712d07f"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>toDelete</from>
+				<to>instances</to>
+			</steps>
+		</steps>
+	</steps>
+</sequence>

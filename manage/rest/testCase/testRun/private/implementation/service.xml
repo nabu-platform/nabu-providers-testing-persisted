@@ -1,0 +1,58 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="f196a31e7a444f1f9a2b4f20e4e63d05"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="c837d3342f2f495990f3c740c400d87e"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="225b3f84832f48e18b63984c26e175a2"
+				serviceId="nabu.testing.core.Services.runScript"
+				resultName="result7d865df4680c49bdadd39696f45c702c"
+				temporaryMapping="true"
+				x="85"
+				y="72"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="b7e541c68ce34dfebba9a319106bce97"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content/script</from>
+				<to>script</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="b7cd0438d07d4b378855eb89eae87f19"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>testRun</from>
+				<to>id</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="26704118d24c403888e110e46a52e5c0"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result7d865df4680c49bdadd39696f45c702c/response/results</from>
+			<to>output/content/results</to>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="6a065e279fac4584aae283e0dd93d80f"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result7d865df4680c49bdadd39696f45c702c/response/summary</from>
+			<to>output/content/summary</to>
+		</steps>
+	</steps>
+</sequence>

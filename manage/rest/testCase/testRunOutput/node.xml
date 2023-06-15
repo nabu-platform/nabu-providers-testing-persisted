@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.types.structure.StructureManager" created="2023-06-15T11:43:16.169+02:00" lastModified="2023-06-15T11:43:37.450+02:00" leaf="true" version="3">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>be.nabu.glue.impl.formatted.FormattedScriptResult</references>
+    <references>be.nabu.glue.impl.formatted.FormattedDashboard</references>
+</node>

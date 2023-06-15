@@ -1,0 +1,6 @@
+<structure interface="nabu.providers.testing.persisted.manage.rest.testCase.step.updateAll:api" name="pipeline">
+    <structure name="input"/>
+    <structure name="output"/>
+    <structure collectionName="testCaseSteps" definition="nabu.providers.testing.persisted.crud.testCaseStep.types.output" maxOccurs="unbounded" minOccurs="0" name="existing"/>
+    <structure collectionName="testCaseSteps" definition="nabu.providers.testing.persisted.crud.testCaseStep.types.output" maxOccurs="unbounded" minOccurs="0" name="toDelete"/>
+</structure>

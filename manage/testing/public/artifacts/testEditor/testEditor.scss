@@ -4,6 +4,7 @@
 		padding: 0.3rem 0.7rem;
 		border: solid 1px #ccc;
 		border-radius: 5px;
+		min-width: 20rem;
 	}
 	.is-depth0 {
 		
@@ -28,5 +29,77 @@
 		font-family: Monospace;
 		font-size: $font-size-xsmall;
 		border: solid 1px #CCC;
+	}
+	table {
+		td:nth-child(3) {
+			max-width: 40vw;
+		}
+		.step.is-disabled {
+			background-color: $color-neutral-lighter;
+			.is-line-number {
+				text-decoration: line-through;
+			}
+		}
+	}
+	.is-input-container {
+		padding: $spacing-scale-medium $spacing-scale-large;
+		padding-left: 0;
+	}
+	.is-output-container {
+		border-left: solid 1px $color-neutral-light;
+		background-color: #f9f9f9;
+		padding: $spacing-scale-medium $spacing-scale-large;
+	}
+}
+
+.is-variant-glue-script {
+	white-space: pre-wrap;
+	font-size: $font-size-xsmall;
+	font-family: Monospace;
+}
+
+@mixin form-combo_variant_test-editor-services {
+	.n-input-combo-dropdown-values {
+		> :not(:last-child) {
+			border-bottom: solid 1px $color-neutral-light;
+		}
+	}
+}
+
+@mixin form-component_label_horizontal {
+	display: flex;
+	flex-wrap: wrap;
+	.is-label-wrapper {
+		display: flex;
+		padding: 0 $spacing-scale-medium;
+		align-items: center;
+		border: solid 1px $color-neutral-light;
+		border-right: none;
+		background-color: $color-neutral-lighter;
+		border-top-left-radius: $border-radius;
+		border-bottom-left-radius: $border-radius;
+		white-space: nowrap;
+	}
+	.is-content-wrapper {
+		flex-grow: 1;
+		input {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+	}
+	.is-content-after {
+		width: 100%;
+		padding: $spacing-scale-small 0;
+	}
+	.is-messages {
+		width: 100%;
+		padding: $spacing-scale-small 0;
+	}
+}
+
+.is-variant-test-editor-mapping {
+	.is-title {
+		padding: 0;
+		font-size: $font-size-small;
 	}
 }

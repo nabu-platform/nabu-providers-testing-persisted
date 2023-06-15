@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <webModule>
     <webFragments>nabu.providers.testing.persisted.manage.rest.service.list</webFragments>
+    <webFragments>nabu.providers.testing.persisted.manage.rest.testCase.testRun</webFragments>
+    <webFragments>nabu.providers.testing.persisted.manage.rest.testCase.step.updateAll</webFragments>
 </webModule>

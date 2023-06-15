@@ -1,0 +1,1 @@
+<structure name="updateSingle" restrict="testCaseId" superType="nabu.providers.testing.persisted.database.types.testCaseStep"/>

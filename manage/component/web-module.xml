@@ -6,4 +6,5 @@
     <webFragments>nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.list</webFragments>
     <webFragments>nabu.providers.testing.persisted.crud.testProjectInstance.services.list</webFragments>
     <webFragments>nabu.providers.testing.persisted.manage.rest.project.run</webFragments>
+    <webFragments>nabu.providers.testing.persisted.crud.testCaseStep</webFragments>
 </webModule>

@@ -6,4 +6,5 @@
     <field minOccurs="0" name="description" type="java.lang.String"/>
     <field name="enabled" type="java.lang.Boolean"/>
     <field comment="The folder where utilities can be found" minOccurs="0" name="utilityFolderId" type="java.lang.String"/>
+    <field minOccurs="0" name="script" type="java.lang.String"/>
 </structure>

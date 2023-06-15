@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-15T11:34:47.092+02:00" lastModified="2023-06-15T11:40:41.547+02:00" leaf="true" version="8">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>nabu.utils.Object.first</references>
+    <references>nabu.providers.testing.persisted.crud.testCase.services.get</references>
+    <references>nabu.providers.testing.persisted.crud.testCase.types.output</references>
+    <references>java.util.UUID</references>
+    <references>nabu.testing.core.Services.runScript</references>
+</node>

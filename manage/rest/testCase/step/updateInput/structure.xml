@@ -1,0 +1,3 @@
+<structure name="updateInput">
+    <structure collectionName="testCaseSteps" definition="nabu.providers.testing.persisted.database.types.testCaseStep" maxOccurs="unbounded" minOccurs="0" name="steps"/>
+</structure>

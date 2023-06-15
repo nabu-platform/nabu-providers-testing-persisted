@@ -33,13 +33,13 @@
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseStep</type>
-        <x>135</x>
-        <y>523</y>
+        <x>116</x>
+        <y>575</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstanceStep</type>
-        <x>647</x>
-        <y>715</y>
+        <x>651</x>
+        <y>762</y>
     </entries>
 </dataModel>

@@ -1,0 +1,4 @@
+<structure name="testRunOutput">
+    <structure definition="be.nabu.glue.impl.formatted.FormattedScriptResult" maxOccurs="unbounded" minOccurs="0" name="results"/>
+    <structure definition="be.nabu.glue.impl.formatted.FormattedDashboard" minOccurs="0" name="summary"/>
+</structure>
