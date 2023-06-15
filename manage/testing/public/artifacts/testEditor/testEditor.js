@@ -22,7 +22,9 @@ Vue.view("test-editor", {
 			testCase: null,
 			// when running manually, store results here
 			manual: null,
-			showAllServices: false
+			showAllServices: false,
+			configurationTab: "variables",
+			matrix: []
 		}
 	},
 	computed: {
@@ -32,11 +34,6 @@ Vue.view("test-editor", {
 	},
 	activate: function(done) {
 		this.load().then(done, done);
-	},
-	ready: function() {
-		// temporary
-		this.variables.push({name: "test"});
-		// -temporary
 	},
 	methods: {
 		isCurrentManualStep: function(result, step) {
@@ -56,6 +53,18 @@ Vue.view("test-editor", {
 				var promises = [];
 				promises.push(this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCase.services.get", {id: this.testCaseId}).then(function(x) {
 					Vue.set(self, "testCase", x);
+					if (x.variables) {
+						var list = JSON.parse(x.variables);
+						if (list && list.length) {
+							nabu.utils.arrays.merge(self.variables, list);
+						}
+					}
+					if (x.matrix) {
+						var list = JSON.parse(x.matrix);
+						if (list && list.length) {
+							nabu.utils.arrays.merge(self.matrix, list);
+						}
+					}
 				}));
 				promises.push(this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStep.services.list", {testCaseId: this.testCaseId, orderBy: ["lineNumber"]}).then(function(x) {
 					self.steps.splice(0);
@@ -143,9 +152,12 @@ Vue.view("test-editor", {
 			};
 			this.results.unshift(this.manual);
 		},
-		runScript: function() {
+		runMatrix: function() {
+			this.runScript(true);
+		},
+		runScript: function(matrix) {
 			var self = this;
-			this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.testRun", { body: { script : this.buildGlue() }}).then(function(x) {
+			this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.testRun", { body: { script : this.buildGlue(), matrix: matrix ? this.buildMatrix() : null }}).then(function(x) {
 				if (x && x.results && x.results.length) {
 					x.results.forEach(function(result) {
 						if (result.log) {
@@ -156,6 +168,24 @@ Vue.view("test-editor", {
 					})
 				}
 			});
+		},
+		buildMatrix: function() {
+			var result = "";
+			var self = this;
+			this.matrix.forEach(function(record) {
+				var first = true;
+				self.variables.forEach(function(variable) {
+					if (first) {
+						first = false;
+					}
+					else {
+						result += ",";
+					}
+					result += record[variable.name] != null ? record[variable.name] : "";
+				})
+				result += "\n";
+			});
+			return result.length ? result : null;
 		},
 		// build the glue service to run
 		buildGlue: function() {
@@ -179,16 +209,19 @@ Vue.view("test-editor", {
 						var first = true;
 						var bindings = JSON.parse(step.inputBindings);
 						Object.keys(bindings).forEach(function(key) {
-							var binding = bindings[key] ? bindings[key].replace(/\./g, "/") : null;
-							if (binding && binding.indexOf("variables/") == 0) {
-								binding = binding.substring("variables/".length);
-							}
-							else if (binding && binding.indexOf("fixed/") == 0) {
+							var binding = bindings[key] ? bindings[key] : null;
+							if (binding && binding.indexOf("fixed.") == 0) {
 								binding = binding.substring("fixed/".length);
 								// check for native types
 								if (binding != "true" && binding != "false" && binding != "null" && !binding.match(/^[0-9.]+$/)) {
 									binding = "\"" + binding + "\"";
 								}
+							}
+							else if (binding && binding.indexOf("variables.") == 0) {
+								binding = binding.substring("variables/".length).replace(/\./g, "/");
+							}
+							else {
+								binding = binding.replace(/\./g, "/");
 							}
 							if (binding) {
 								if (first) {
@@ -459,6 +492,20 @@ Vue.view("test-editor", {
 					editor.style.minHeight = lines + "rem";
 				}
 			})
+		}
+	},
+	watch: {
+		"variables": {
+			deep: true,
+			handler: function(newValue) {
+				this.testCase.variables = JSON.stringify(newValue);
+			}
+		},
+		"matrix": {
+			deep: true,
+			handler: function(newValue) {
+				this.testCase.matrix = JSON.stringify(newValue);
+			}
 		}
 	}
 });

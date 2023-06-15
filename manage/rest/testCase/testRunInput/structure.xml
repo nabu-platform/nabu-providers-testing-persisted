@@ -1,3 +1,4 @@
 <structure name="testRunInput">
     <field name="script" type="java.lang.String"/>
+    <field minOccurs="0" name="matrix" type="java.lang.String"/>
 </structure>

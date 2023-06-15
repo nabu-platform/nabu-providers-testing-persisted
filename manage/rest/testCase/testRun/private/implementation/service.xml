@@ -35,6 +35,15 @@
 				<from>testRun</from>
 				<to>id</to>
 			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="388f7a34f77b426ca4eb6f32007a18fe"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content/matrix</from>
+				<to>matrix</to>
+			</steps>
 		</steps>
 		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 				disabled="false"

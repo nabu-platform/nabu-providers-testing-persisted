@@ -3,9 +3,10 @@
 		<ul class="is-menu is-variant-toolbar">
 			<li class="is-column"><button class="is-button is-size-small is-variant-primary-outline" @click="save"><icon name="save"/><span class="is-text">Save</span></button></li>
 			<li class="is-column"><button class="is-button is-size-small is-variant-secondary-outline" @click="showGlue = true"><icon name="search"/><span class="is-text">Raw</span></button></li>
-			<li class="is-column"><button :disabled="!!manual" class="is-button is-size-small is-variant-primary" @click="runScript"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
-			<li class="is-column"><button :disabled="!!manual" class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
-			<li class="is-column"><button :disabled="!!manual" class="is-button is-size-small" @click="showConfiguration = true"><icon name="cog"/><span class="is-text">Configure</span></button></li>
+			<li class="is-column"><button :disabled="manual" class="is-button is-size-small is-variant-primary" @click="runScript"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
+			<li class="is-column"><button :disabled="manual || matrix.length == 0 || variables.length == 0" class="is-button is-size-small is-variant-danger" @click="runMatrix"><icon name="play"/><span class="is-text">Run Matrix</span></button></li>
+			<li class="is-column"><button :disabled="manual" class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
+			<li class="is-column"><button class="is-button is-size-small" @click="showConfiguration = true"><icon name="cog"/><span class="is-text">Configure</span></button></li>
 		</ul>
 		<n-form mode="component">
 			<table class="is-table">
@@ -21,7 +22,7 @@
 				<tbody>
 					<tr v-for="(step, index) in steps" :key="step.id" class="step" :class="{'is-disabled': !step.enabled}">
 						<td class="is-border-none"><div class="is-column"><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, -1)"><icon name="chevron-up"/></button><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, 1)"><icon name="chevron-down"/></button></div></td>
-						<td><div class="is-row is-spacing-small is-align-center"><icon v-if="false && step.type == 'step'" :name="step.automate ? 'server' : 'hand-pointer'"/><span class="is-text is-line-number">{{formatLineNumber(index)}}</span><n-form-switch class="is-size-small" v-model="step.enabled"/><button class="is-button is-variant-ghost is-size-small" @click="remove(step)"><icon class="is-color-danger-outline" name="times"/></button></div></td>
+						<td><div class="is-row is-spacing-small is-align-center"><button class="is-button is-variant-ghost is-size-xsmall" @click="addAfter(index)"><icon name="plus"/></button><span class="is-text is-line-number">{{formatLineNumber(index)}}</span><n-form-switch class="is-size-small" v-model="step.enabled"/><button class="is-button is-variant-ghost is-size-xsmall" @click="remove(step)"><icon class="is-color-danger-outline" name="times"/></button></div></td>
 						<td><div :class="['is-depth' + step.depth, 'is-type-' + step.type]" class="is-content-wrapper is-description-wrapper"><div :key="step.id" ref="editors" 
 							:step-id="step.id"
 							@keydown.enter.ctrl="addAfter(index)" 
@@ -115,10 +116,42 @@
 			</div>
 		</n-sidebar>
 		<n-sidebar v-if="showConfiguration" @close="function() { showConfiguration = false }">
-			<n-form content-class="is-column is-spacing-medium" class="is-variant-vertical">
+			<div class="is-row">
+				<button @click="configurationTab = 'variables'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'variables'}">Variables</button>
+				<button :disabled="!variables.length" @click="configurationTab = 'matrix'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'matrix'}">Matrix</button>
+				<button @click="configurationTab = 'settings'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'settings'}">Settings</button>
+			</div>
+			<n-form class="is-variant-vertical" content-class="is-column is-spacing-small" v-if="configurationTab == 'variables'">
+				<div class="is-column is-spacing-medium is-color-body has-button-close" v-for="(variable, index) in variables">
+					<button class="is-button is-size-small is-variant-close" @click="variables.splice(index, 1)"><icon name="times"/></button>
+					<n-form-text v-model="variable.name" label="Name" after="Note that you must use camelCase naming convention for the variable name."/>
+					<n-form-text v-model="variable.default" label="Default value"/>
+				</div>
+				<div class="is-row is-align-end">
+					<button class="is-button is-variant-primary-outline is-size-xsmall" @click="variables.push({})"><icon name="plus"/><span class="is-text">Variable</span></button>
+				</div>
+			</n-form>
+			<n-form content-class="is-column is-spacing-medium" class="is-variant-vertical" v-else-if="configurationTab == 'settings'">
 				<n-form-text v-model="testCase.title" label="Title"/>
 				<n-form-text v-model="testCase.utilityFolderId" label="Utility Folder Id"/>
 				<n-form-text v-model="testCase.description" type="area" label="Description"/>
+			</n-form>
+			<n-form class="is-variant-vertical" content-class="is-column is-spacing-small" v-if="configurationTab == 'matrix'">
+				<table class="is-table">
+					<thead>
+						<tr>
+							<th v-for="variable in variables">{{variable.name}}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(record, index) in matrix">
+							<td v-for="variable in variables"><n-form-text v-model="record[variable.name]" :placeholder="variable.default"/></td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="is-row is-align-end">
+					<button class="is-button is-variant-primary-outline is-size-xsmall" @click="matrix.push({})"><icon name="plus"/><span class="is-text">Record</span></button>
+				</div>
 			</n-form>
 		</n-sidebar>
 	</div>
