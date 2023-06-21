@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.web.component.WebComponentManager" created="2023-06-02T12:48:05.510+02:00" lastModified="2023-06-15T12:46:06.186+02:00" leaf="true" version="5">
+<node artifactManager="be.nabu.eai.module.web.component.WebComponentManager" created="2023-06-02T12:48:05.510+02:00" lastModified="2023-06-16T10:43:21.151+02:00" leaf="true" version="7">
     <environmentId>apollo</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
@@ -7,4 +7,6 @@
     <references>nabu.providers.testing.persisted.manage.rest.service.list</references>
     <references>nabu.providers.testing.persisted.manage.rest.testCase.testRun</references>
     <references>nabu.providers.testing.persisted.manage.rest.testCase.step.updateAll</references>
+    <references>nabu.providers.testing.persisted.manage.rest.testCase.instance.merge</references>
+    <references>nabu.providers.testing.persisted.manage.rest.testCase.instance.list</references>
 </node>

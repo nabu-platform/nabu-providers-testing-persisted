@@ -44,6 +44,15 @@
 				<from>input/content/matrix</from>
 				<to>matrix</to>
 			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="50377031e5bc42ce96f88835e5c31161"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content/attachments</from>
+				<to>attachments</to>
+			</steps>
 		</steps>
 		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 				disabled="false"

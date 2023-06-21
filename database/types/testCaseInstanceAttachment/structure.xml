@@ -1,0 +1,8 @@
+<structure collectionName="testCaseInstanceAttachments" name="testCaseInstanceAttachment">
+    <field name="id" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" primaryKey="true" type="java.util.UUID"/>
+    <field foreignKey="nabu.providers.testing.persisted.database.types.testCaseInstance:id" name="testCaseInstanceId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field foreignKey="nabu.providers.testing.persisted.database.types.testCaseInstanceStep:id" minOccurs="0" name="testCaseInstanceStepId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field name="name" type="java.lang.String"/>
+    <field name="uri" type="java.net.URI"/>
+    <field minOccurs="0" name="type" type="java.lang.String"/>
+</structure>

@@ -4,4 +4,7 @@
     <field foreignKey="nabu.providers.testing.persisted.database.types.testCaseStep:id" name="testCaseStepId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
     <field name="started" timezone="UTC" type="java.util.Date"/>
     <field minOccurs="0" name="stopped" timezone="UTC" type="java.util.Date"/>
+    <field comment="Free style comment by user" minOccurs="0" name="comment" type="java.lang.String"/>
+    <field minOccurs="0" name="severity" type="java.lang.String"/>
+    <field comment="Issue tracker id" minOccurs="0" name="issueId" type="java.lang.String"/>
 </structure>

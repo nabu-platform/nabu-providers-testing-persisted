@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.types.structure.StructureManager" created="2023-06-15T11:40:55.917+02:00" lastModified="2023-06-15T17:24:25.921+02:00" leaf="true" version="4">
+<node artifactManager="be.nabu.eai.module.types.structure.StructureManager" created="2023-06-15T11:40:55.917+02:00" lastModified="2023-06-21T10:26:21.276+02:00" leaf="true" version="5">
     <environmentId>apollo</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
     <properties/>
     <references>java.lang.String</references>
+    <references>nabu.testing.core.types.TestAttachment</references>
 </node>

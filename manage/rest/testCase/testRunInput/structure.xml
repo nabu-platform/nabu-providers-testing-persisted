@@ -1,4 +1,5 @@
 <structure name="testRunInput">
     <field name="script" type="java.lang.String"/>
     <field minOccurs="0" name="matrix" type="java.lang.String"/>
+    <structure definition="nabu.testing.core.types.TestAttachment" maxOccurs="unbounded" minOccurs="0" name="attachments"/>
 </structure>

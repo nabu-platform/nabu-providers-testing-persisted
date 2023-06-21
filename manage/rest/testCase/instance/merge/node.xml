@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-16T09:41:26.608+02:00" lastModified="2023-06-21T17:02:39.112+02:00" leaf="true" version="24">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>nabu.frameworks.datastore.Services.store</references>
+    <references>nabu.utils.Runtime.getCurrentToken</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceStep.services.update</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.services.create</references>
+    <references>nabu.providers.testing.persisted.manage.rest.testCase.instance.instance</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstance.services.get</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstance.services.create</references>
+    <references>nabu.utils.Server.image</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.services.delete</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.types.output</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceStep.services.delete</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstance.types.output</references>
+    <references>nabu.utils.Server.getServerName</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceStep.types.output</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceStep.services.list</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstance.services.update</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.services.list</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceStep.services.create</references>
+</node>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-13T15:33:50.910+02:00" lastModified="2023-06-13T16:03:03.190+02:00" leaf="true" version="18">
+<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-13T15:33:50.910+02:00" lastModified="2023-06-16T09:27:09.906+02:00" leaf="true" version="21">
     <environmentId>apollo</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
@@ -11,5 +11,7 @@
     <references>nabu.utils.reflection.Node.services</references>
     <references>nabu.utils.Math.multiply</references>
     <references>nabu.utils.Math.sum</references>
+    <references>java.lang.String</references>
+    <references>nabu.utils.String.split</references>
     <references>nabu.utils.List.getAll</references>
 </node>

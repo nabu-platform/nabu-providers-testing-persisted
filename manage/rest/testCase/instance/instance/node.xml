@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.types.structure.StructureManager" created="2023-06-16T09:41:35.309+02:00" lastModified="2023-06-21T15:08:53.124+02:00" leaf="true" version="6">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>nabu.providers.testing.persisted.database.types.testCaseInstance</references>
+    <references>nabu.providers.testing.persisted.database.types.testCaseInstanceStep</references>
+    <references>nabu.providers.testing.persisted.database.types.testCaseInstanceValidation</references>
+    <references>nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment</references>
+</node>

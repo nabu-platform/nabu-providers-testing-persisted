@@ -1,0 +1,8 @@
+<structure interface="nabu.providers.testing.persisted.manage.rest.testCase.instance.list:api" name="pipeline">
+    <structure name="input"/>
+    <structure name="output"/>
+    <structure collectionName="testCaseInstanceSteps" definition="nabu.providers.testing.persisted.crud.testCaseInstanceStep.types.output" maxOccurs="unbounded" minOccurs="0" name="steps"/>
+    <structure collectionName="testCaseInstanceValidations" definition="nabu.providers.testing.persisted.crud.testCaseInstanceValidation.types.output" maxOccurs="unbounded" minOccurs="0" name="validations"/>
+    <structure collectionName="testCaseInstanceAttachments" definition="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.types.output" maxOccurs="unbounded" minOccurs="0" name="attachments"/>
+    <structure collectionName="testCaseInstanceAttachments" definition="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.types.output" maxOccurs="unbounded" minOccurs="0" name="attachmentsForResult"/>
+</structure>

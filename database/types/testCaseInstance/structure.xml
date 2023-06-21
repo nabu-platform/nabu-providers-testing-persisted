@@ -1,16 +1,23 @@
 <structure collectionName="testCaseInstances" name="testCaseInstance">
     <field name="id" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" primaryKey="true" type="java.util.UUID"/>
     <field foreignKey="nabu.providers.testing.persisted.database.types.testCase:id" name="testCaseId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field comment="You can give a name to the run" minOccurs="0" name="title" type="java.lang.String"/>
+    <field minOccurs="0" name="description" type="java.lang.String"/>
     <field name="started" timezone="UTC" type="java.util.Date"/>
     <field minOccurs="0" name="stopped" timezone="UTC" type="java.util.Date"/>
     <field minOccurs="0" name="severity" type="java.lang.String"/>
-    <field minOccurs="0" name="environment" type="java.lang.String"/>
-    <field name="amountOfValidations" type="java.lang.Long"/>
-    <field name="amountSuccessful" type="java.lang.Long"/>
-    <field name="amountError" type="java.lang.Long"/>
+    <field minOccurs="0" name="amountOfValidations" type="java.lang.Long"/>
+    <field minOccurs="0" name="amountSuccessful" type="java.lang.Long"/>
+    <field minOccurs="0" name="amountError" type="java.lang.Long"/>
     <field minOccurs="0" name="log" type="java.lang.String"/>
     <field minOccurs="0" name="exception" type="java.lang.String"/>
     <field comment="In matrix testing we can have multiple variants" minOccurs="0" name="variant" type="java.lang.String"/>
-    <field generated="true" name="testCaseIndex" type="java.lang.Long"/>
     <field comment="quickRun, manual (you step manually), scheduled" minOccurs="0" name="runType" type="java.lang.String"/>
+    <field comment="Manual comment that people can set" minOccurs="0" name="comment" type="java.lang.String"/>
+    <field comment="If a user ran this test, we capture the id" minOccurs="0" name="userId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field comment="Index calculated by application level" name="testCaseIndex" type="java.lang.Long"/>
+    <field minOccurs="0" name="imageEnvironment" type="java.lang.String"/>
+    <field minOccurs="0" name="imageName" type="java.lang.String"/>
+    <field minOccurs="0" name="imageVersion" type="java.lang.String"/>
+    <field minOccurs="0" name="server" type="java.lang.String"/>
 </structure>

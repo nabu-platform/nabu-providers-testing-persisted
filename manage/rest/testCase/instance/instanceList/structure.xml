@@ -1,0 +1,4 @@
+<structure name="instanceList">
+    <structure definition="nabu.providers.testing.persisted.manage.rest.testCase.instance.instance" maxOccurs="unbounded" minOccurs="0" name="results"/>
+    <structure definition="be.nabu.eai.module.services.crud.Page" minOccurs="0" name="page"/>
+</structure>
