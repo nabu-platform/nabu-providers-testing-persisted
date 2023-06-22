@@ -523,6 +523,15 @@
 					<from>newAttachment/id</from>
 					<to>id</to>
 				</steps>
+				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+						disabled="false"
+						id="4f3f4bc01e2b4e4488a0e11c02ccf0e4"
+						mask="false"
+						optional="false"
+						fixedValue="false">
+					<from>newAttachment/created</from>
+					<to>instance/created</to>
+				</steps>
 			</steps>
 			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 					disabled="false"

@@ -2,8 +2,7 @@
 	<div class="is-column is-spacing-gap-medium is-test-editor">
 		<div class="is-row">
 			<button @click="configurationTab = 'editor'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'editor'}">Editor</button>
-			<button @click="configurationTab = 'variables'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'variables'}">Variables</button>
-			<button :disabled="!variables.length" @click="configurationTab = 'matrix'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'matrix'}">Matrix</button>
+			<button :disabled="!variables.length" @click="configurationTab = 'matrix'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'matrix'}">Variables</button>
 			<button @click="configurationTab = 'settings'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'settings'}">Settings</button>
 		</div>
 		<n-form class="is-variant-vertical" content-class="is-row is-spacing-small is-spacing-gap-xsmall" v-if="configurationTab == 'variables'">
@@ -40,30 +39,43 @@
 				<thead>
 					<tr>
 						<th class="is-border-none"></th>
-						<th v-for="variable in variables">{{variable.name}}</th>
+						<th v-for="(variable, variableIndex) in variables"><div class="is-row is-wrap-none is-align-center"><div class="is-row is-spacing-gap-small" v-if="!variableUsed(variable)"><n-form-text v-model="variable.name" placeholder="camelCase variable name" /><button class="is-button is-variant-ghost is-size-xsmall" @click="variables.splice(variableIndex)"><icon name="times"/></button></div><span v-else>{{variable.name}}</span>
+							<button class="is-button is-variant-ghost is-size-xxsmall" @click="moveVariable(variable, -1)"><icon name="chevron-left"/></button>
+							<button class="is-button is-variant-ghost is-size-xxsmall" @click="moveVariable(variable, 1)"><icon name="chevron-right"/></button>
+						</div></th>
+						<th><button class="is-button is-variant-ghost is-size-xsmall" @click="variables.push({})"><icon name="plus"/></button></th>
 					</tr>
 				</thead>
 				<tbody>
+					<tr>
+						<td class="is-border-none">Default values</td>
+						<td v-for="variable in variables"><n-form-text v-model="variable.default" placeholder="Set a default value"/></td>
+						<td></td>
+					</tr>
 					<tr v-for="(record, index) in matrix">
-						<td class="is-border-none"><n-form-text v-model="record['$variant']" label="Title"/></td>
+						<td class="is-border-none"><n-form-text v-model="record['$variant']" label="Variant"/></td>
 						<td v-for="variable in variables"><n-form-text v-model="record[variable.name]" :placeholder="variable.default"/></td>
+						<td><button class="is-button is-size-xsmall is-variant-ghost" @click="matrix.splice(index, 1)"><icon name="times" class="is-variant-danger-outline"/></button></td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="is-row is-align-end">
-				<button class="is-button is-variant-primary-outline is-size-xsmall" @click="matrix.push({})"><icon name="plus"/><span class="is-text">Record</span></button>
+				<button class="is-button is-variant-primary-outline is-size-xsmall" @click="matrix.push({})"><icon name="plus"/><span class="is-text">Variant</span></button>
 			</div>
 		</n-form>
 		<div class=" is-column is-spacing-gap-medium" v-else>
-			<ul class="is-menu is-variant-toolbar">
-				<li class="is-column"><button class="is-button is-size-small is-variant-primary-outline" @click="save"><icon name="save"/><span class="is-text">Save</span></button></li>
-				<li class="is-column"><button class="is-button is-size-small is-variant-secondary-outline" @click="showGlue = true"><icon name="search"/><span class="is-text">Raw</span></button></li>
-				<li class="is-column" v-if="false"><button class="is-button is-size-small" @click="showConfiguration = true"><icon name="cog"/><span class="is-text">Configure</span></button></li>
-				<li class="is-column" v-if="!manual"><button class="is-button is-size-small is-variant-primary" @click="runScript(false)"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
-				<li class="is-column" v-if="!manual"><button :disabled="matrix.length == 0 || variables.length == 0" class="is-button is-size-small is-variant-danger" @click="runMatrix"><icon name="play"/><span class="is-text">Run Matrix</span></button></li>
-				<li class="is-column" v-if="!manual"><button class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
-				<li class="is-column" v-if="manual"><button class="is-button is-size-small is-variant-danger" @click="stopManual"><icon name="stop"/><span class="is-text">Stop Manual</span></button></li>
-			</ul>
+			<div class="is-column is-spacing-gap-medium">
+				<ul class="is-menu is-variant-toolbar">
+					<li class="is-column"><button class="is-button is-size-small is-variant-primary-outline" @click="save"><icon name="save"/><span class="is-text">Save</span></button></li>
+					<li class="is-column"><button class="is-button is-size-small is-variant-secondary-outline" @click="showGlue = true"><icon name="search"/><span class="is-text">Raw</span></button></li>
+					<li class="is-column" v-if="false"><button class="is-button is-size-small" @click="showConfiguration = true"><icon name="cog"/><span class="is-text">Configure</span></button></li>
+					<li class="is-column" v-if="!manual"><button class="is-button is-size-small is-variant-primary" @click="runScript(false)"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
+					<li class="is-column" v-if="!manual"><button :disabled="matrix.length == 0 || variables.length == 0" class="is-button is-size-small is-variant-danger" @click="runMatrix"><icon name="play"/><span class="is-text">Run Matrix</span></button></li>
+					<li class="is-column" v-if="!manual"><button class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
+					<li class="is-column" v-if="manual"><button class="is-button is-size-small is-variant-danger" @click="stopManual"><icon name="stop"/><span class="is-text">Stop Manual</span></button></li>
+				</ul>
+				<n-form-switch v-model="showAutomation" label="Show automation"/>
+			</div>
 			<n-form mode="component">
 				<table class="is-table">
 					<thead>
@@ -100,15 +112,19 @@
 										@keydown.up.alt="shift(step, -1)"
 										@keydown.down.alt="shift(step, 1)"
 										class="is-inline-editor" 
-										placeholder="Add description" 
-										v-html-once="step.description ? step.description : ''" 
+										placeholder="Add title" 
+										v-html-once="step.title ? step.title : ''" 
 										@paste="paste(step, $event)" 
 										:contenteditable="true" 
 										@keyup="update(step, $event)" 
 										@blur="update(step, $event)" 
 										@input="update(step, $event)"></div></div>
-									<button class="is-button is-edit-details is-variant-ghost is-size-xsmall" @click="editStepDetails(step)"><icon name="search"/></button>
-								</div></td>
+									<button class="is-button is-edit-details is-variant-ghost is-size-xsmall" @click="editingStepDefinition = step"><icon name="search"/></button>
+								</div><n-absolute top="100%" left="0" v-if="editingStepDefinition == step" :autoclose="true" @close="function() { editingStepDefinition = null }">
+								<n-form class="is-variant-vertical is-popup-form">
+									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes using markdown syntax"/>
+								</n-form>
+							</n-absolute></td>
 							<td v-if="showAutomation && step.scriptType == 'glue'"><textarea 
 								v-if="step.automate" 
 								:step-id="step.id"
@@ -182,17 +198,21 @@
 									<icon class="is-spacing-xsmall is-size-xsmall" :name="getResult(result, step).severity == 'INFO' ? 'check' : (getResult(result, step).severity == 'WARNING' ? 'question' : 'times')" />
 									<span class="is-badge" v-if="step.enabled && getResult(result, step).stopped">{{new Date(getResult(result, step).stopped).getTime() - new Date(getResult(result, step).started).getTime()}} ms</span>
 									<n-info v-if="getResult(result, step).comment"><span v-html="getResult(result, step).comment"/></n-info>
+									<n-info class="error" icon="question" v-if="getError(result, step)"><span v-html="getError(result, step)"/></n-info>
 									<button v-for="attachment in getAttachmentsFor(result, step)" class="is-button is-variant-ghost is-size-xsmall" @click="showAttachment(attachment)"><icon name="image"/></button>
 								</div>
 								<div v-else-if="result.runType != 'manual' || result != manual" class="is-row is-result is-color-warning-outline">
 									<icon name="question" class="is-spacing-xsmall is-size-xsmall"/>
 								</div>
-								<ul class="is-menu is-variant-toolbar" v-else-if="result.runType == 'manual' && isCurrentManualStep(result, step) && !result.stopped">
-									<li class="is-column"><button class="is-button is-size-small is-variant-success-outline" @click="setResult(result, step, 'INFO')"><icon name="check"/><span class="is-text">Yes</span></button></li>
-									<li class="is-column"><button class="is-button is-size-small is-variant-danger-outline" @click="setResult(result, step, 'ERROR')"><icon name="times"/><span class="is-text">No</span></button></li>
-									<li class="is-column"><button class="is-button is-size-small is-variant-warning-outline" @click="setResult(result, step, 'WARNING')"><icon name="chevron-down"/><span class="is-text">Skip</span></button></li>
-									<li class="is-column"><button class="is-button is-size-small is-variant-neutral-outline" @click="editingStep = step"><icon name="pencil-alt"/><span class="is-text">Edit</span></button></li>
-								</ul>
+								<div class="is-column is-spacing-gap-small" v-else-if="result.runType == 'manual' && isCurrentManualStep(result, step) && !result.stopped">
+									<ul class="is-menu is-variant-toolbar">
+										<li class="is-column"><button class="is-button is-size-small is-variant-success-outline" @click="setResult(result, step, 'INFO')"><icon name="check"/><span class="is-text">Yes</span></button></li>
+										<li class="is-column"><button class="is-button is-size-small is-variant-danger-outline" @click="setResult(result, step, 'ERROR')"><icon name="times"/><span class="is-text">No</span></button></li>
+										<li class="is-column"><button class="is-button is-size-small is-variant-warning-outline" @click="setResult(result, step, 'WARNING')"><icon name="chevron-down"/><span class="is-text">Skip</span></button></li>
+										<li class="is-column"><button class="is-button is-size-small is-variant-neutral-outline" @click="editingStep = step"><icon name="pencil-alt"/><span class="is-text">Edit</span></button></li>
+									</ul>
+									<p v-if="step.description" v-html="$services.formatter.format(step.description, {format: 'markdown'})"/>
+								</div>
 								<div v-else-if="result == manual && result.runType == 'manual' && !isCurrentManualStep(result,step) && !result.stopped && result.steps.length == 0">
 									<button class="is-button is-size-small" @click="runUntil(step)"><icon name="play" class="is-size-xxsmall"/><span class="is-text">Automatically run until here</span></button>
 								</div>
@@ -221,48 +241,6 @@
 					</code>
 				</div>
 			</n-sidebar>
-			<n-sidebar v-if="showConfiguration" @close="function() { showConfiguration = false }">
-				<div class="is-row">
-					<button @click="configurationTab = 'variables'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'editor'}">Editor</button>
-					<button @click="configurationTab = 'variables'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'variables'}">Variables</button>
-					<button :disabled="!variables.length" @click="configurationTab = 'matrix'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'matrix'}">Matrix</button>
-					<button @click="configurationTab = 'settings'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'settings'}">Settings</button>
-				</div>
-				<n-form class="is-variant-vertical" content-class="is-column is-spacing-small is-spacing-gap-xsmall" v-if="configurationTab == 'variables'">
-					<div class="is-column is-spacing-medium is-color-body has-button-close" v-for="(variable, index) in variables">
-						<button class="is-button is-size-small is-variant-close" @click="variables.splice(index, 1)"><icon name="times"/></button>
-						<n-form-text v-model="variable.name" label="Name" after="Note that you must use camelCase naming convention for the variable name."/>
-						<n-form-text v-model="variable.default" label="Default value"/>
-					</div>
-					<div class="is-row is-align-end">
-						<button class="is-button is-variant-primary-outline is-size-xsmall" @click="variables.push({})"><icon name="plus"/><span class="is-text">Variable</span></button>
-					</div>
-				</n-form>
-				<n-form content-class="is-column is-spacing-medium" class="is-variant-vertical" v-else-if="configurationTab == 'settings'">
-					<n-form-text v-model="testCase.title" label="Title"/>
-					<n-form-text v-model="testCase.utilityFolderId" label="Utility Folder Id"/>
-					<n-form-text v-model="testCase.description" type="area" label="Description"/>
-				</n-form>
-				<n-form class="is-variant-horizontal" content-class="is-column is-spacing-small" v-if="configurationTab == 'matrix'">
-					<table class="is-table">
-						<thead>
-							<tr>
-								<th class="is-border-none"></th>
-								<th v-for="variable in variables">{{variable.name}}</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="(record, index) in matrix">
-								<td class="is-border-none"><n-form-text v-model="record['$variant']" label="Title"/></td>
-								<td v-for="variable in variables"><n-form-text v-model="record[variable.name]" :placeholder="variable.default"/></td>
-							</tr>
-						</tbody>
-					</table>
-					<div class="is-row is-align-end">
-						<button class="is-button is-variant-primary-outline is-size-xsmall" @click="matrix.push({})"><icon name="plus"/><span class="is-text">Record</span></button>
-					</div>
-				</n-form>
-			</n-sidebar>
 			<n-sidebar v-if="videoContent" @close="function() { videoContent = null }">
 				<div class="is-column is-spacing-large">
 					<h2 class="is-h2">Video</h2>
@@ -275,6 +253,44 @@
 					<img :src="imageContent.url" class="image-preview"/>
 				</div>
 			</n-sidebar>
+			<n-sidebar v-if="seleniumContent" @close="function() { seleniumContent = null }">
+				<div class="is-column is-spacing-large">
+					<h2 class="is-h2">Selenium Recording</h2>
+					<test-selenium-viewer :screenshots="seleniumContent.screenshots" :steps="seleniumContent.steps"/>
+				</div>
+			</n-sidebar>
 		</div>
 	</div>
 </template>
+
+
+<template id="test-selenium-viewer">
+	<div class="test-selenium-viewer is-column is-spacing-gap-medium">
+		<template v-if="frames.length == 0">
+			<p>No frames available</p>
+		</template>
+		<template v-else>
+			<div class="player is-row">
+				<ul class="is-menu is-variant-toolbar">
+					<li class="is-column" v-if="paused"><button class="is-button is-size-small is-variant-primary-outline" @click="startPlay"><icon name="play"/><span class="is-text">Play</span></button></li>
+					<li class="is-column" v-else><button class="is-button is-size-small is-variant-primary-outline" @click="pause"><icon name="pause"/><span class="is-text">Pause</span></button></li>
+					<li class="is-column" v-if="!paused"><button class="is-button is-size-small is-variant-danger-outline" @click="stop"><icon name="stop"/><span class="is-text">Stop</span></button></li>
+					<li class="is-column" v-if="!paused"><button class="is-button is-size-small"><span class="is-text">{{timer}}ms</span></button></li>
+				</ul>
+			</div>
+			<div class="is-row is-spacing-gap-small">
+				<div class="steps is-column">
+					<div v-for="step in steps" class="is-row">
+						<button :class="[{'is-active': currentStep == step}, getCalculatedStateClass(step)]" class="is-button is-fill-normal is-border-radius-none" @click="selectStep(step)"><span class="is-text">{{step.command}}</span><span v-if="step.value"> {{step.value}}</span><span v-if="step.target"> on {{step.target}}</span></button>
+					</div>
+				</div>
+				<div class="player">
+					<img v-if="currentFrame >= 0" :src="frames[currentFrame].url" class="image-player" @load="imageLoaded"/>
+					<n-form-text type="range" :minimum="0" :maximum="frames.length - 1" v-model="currentFrame"/>
+				</div>
+			</div>
+		</template>
+	</div>
+</template>
+
+

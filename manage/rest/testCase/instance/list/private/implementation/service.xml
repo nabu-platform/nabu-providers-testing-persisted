@@ -261,20 +261,35 @@
 					<from>attachmentForResult/type</from>
 					<to>result/attachments[0]/type</to>
 				</steps>
+				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+						disabled="false"
+						id="71b991d6d6ca40d29f312d64953ffd0e"
+						mask="false"
+						optional="false"
+						fixedValue="false">
+					<from>attachmentForResult/created</from>
+					<to>result/attachments[0]/created</to>
+				</steps>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+					disabled="false"
+					features="TEST_EMBED_ATTACHMENT_CONTENT"
+					id="1d0b66ad6c0241078e221151f59fc5a4"
+					lineNumber="8">
 				<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
 						disabled="false"
-						id="7f26e30ae5214f5bbf92d0aad22aa6bb"
+						id="9ead9f88300c4549a334f6865a5827c2"
 						serviceId="nabu.frameworks.datastore.Services.retrieve"
-						resultName="result4363494ff86b4551be344cf04c37e3bc"
+						resultName="resultf8a448c5688247b6939780a543d2ae63"
 						temporaryMapping="true"
-						x="121"
-						y="451"
+						x="197"
+						y="47"
 						invocationOrder="0"
 						asynchronous="false"
 						recache="false">
 					<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 							disabled="false"
-							id="1d09e1c7c88f4060882ce6846d7ef530"
+							id="881cdf00a74d45a185e8ecc6e1ec4196"
 							mask="false"
 							optional="false"
 							fixedValue="false">
@@ -284,11 +299,11 @@
 				</steps>
 				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 						disabled="false"
-						id="904385bb373e4c1faadfa46484f5af19"
+						id="07fca78c821e422395bb6491f6259b98"
 						mask="false"
 						optional="false"
 						fixedValue="false">
-					<from>result4363494ff86b4551be344cf04c37e3bc/stream</from>
+					<from>resultf8a448c5688247b6939780a543d2ae63/stream</from>
 					<to>result/attachments[0]/content</to>
 				</steps>
 			</steps>

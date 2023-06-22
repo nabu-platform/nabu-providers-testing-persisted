@@ -1,0 +1,118 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="72d762e734554c13a76e09562e54ef3f"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="07d91a9ce62144a8a988c09c355eca56"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="af352e446d2640b48352aaf5879e0e55"
+				serviceId="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.services.get"
+				resultName="result9dd712338bfb4ef585c5f524db782778"
+				temporaryMapping="true"
+				x="141"
+				y="48"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="7ef003632e5a4aa7bbfee81acb6fe48c"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/path/attachmentId</from>
+				<to>id</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="b837d33fb40347f1a98b99c66bd33431"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result9dd712338bfb4ef585c5f524db782778/result</from>
+			<to>attachment</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="d6d26352331b4953b36f046d53de55ae"
+			label="attachment/uri != null"
+			lineNumber="3">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="3ffaea57cda4409ebde4a7cf986c1919"
+				serviceId="nabu.frameworks.datastore.Services.retrieve"
+				resultName="result7c94e25a0b71470b8173e20248263117"
+				temporaryMapping="true"
+				x="335"
+				y="171"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="c6f750eed37e4c259a663da111507383"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>attachment/uri</from>
+				<to>uri</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="4fd1f9e46f194d36a47b28475643b8c2"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result7c94e25a0b71470b8173e20248263117/stream</from>
+			<to>output/content</to>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="8e51df3f4bbd4bc78dc852563db649f4"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>attachment/name</from>
+			<to>output/meta/fileName</to>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="d644a2c0010140479348dec72cd63efc"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>attachment/type</from>
+			<to>output/meta/contentType</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			comment="Set cache output"
+			disabled="false"
+			id="30d4a49c450f4b2897e19d8262dea986"
+			lineNumber="4">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="e8adf45770b84cb99a159a035ab3b071"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>attachment/created</from>
+			<to>output/cache/lastModified</to>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="95f24e9c24f74e66b9526fa6a26e87c5"
+				mask="false"
+				optional="false"
+				fixedValue="true">
+			<from>false</from>
+			<to>output/cache/mustRevalidate</to>
+		</steps>
+	</steps>
+</sequence>

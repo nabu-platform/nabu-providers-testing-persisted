@@ -1,3 +1,3 @@
 <structure name="attachment" restrict="uri" superType="nabu.providers.testing.persisted.database.types.testCaseInstanceAttachment">
-    <field name="content" type="[B"/>
+    <field minOccurs="0" name="content" type="[B"/>
 </structure>

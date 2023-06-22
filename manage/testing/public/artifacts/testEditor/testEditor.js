@@ -9,7 +9,7 @@ Vue.view("test-editor", {
 	},
 	data: function() {
 		return {
-			showAutomation: true,
+			showAutomation: false,
 			steps: [],
 			// the variables for this script (order matters for matrix!)
 			// for simplicity (of filling it in manually) and matrix testing, all variables should be simple types
@@ -34,10 +34,13 @@ Vue.view("test-editor", {
 			matrix: [],
 			editingResult: null,
 			editingStep: null,
+			// when editing the step definition in the tree
+			editingStepDefinition: null,
 			editingStepContent: {},
 			editingAttachments: [],
 			videoContent: null,
-			imageContent: null
+			imageContent: null,
+			seleniumContent: null
 		}
 	},
 	computed: {
@@ -67,6 +70,18 @@ Vue.view("test-editor", {
 		this.load().then(done, done);
 	},
 	methods: {
+		variableUsed: function(variable) {
+			var used = false;
+			this.steps.forEach(function(step) {
+				console.log("checking step", step);
+				Object.values(step.inputBindingsObject).forEach(function(value) {
+					if (value.indexOf("variables." + variable.name + ".") == 0 || value == "variables." + variable.name) {
+						used = true;
+					}
+				})
+			});
+			return used;
+		},
 		isVisibleStep: function(step) {
 			var visible = true;
 			var depth = step.depth;
@@ -84,12 +99,20 @@ Vue.view("test-editor", {
 			return visible;
 		},
 		hasRecording: function(result) {
-			return result.attachments && result.attachments.filter(function(x) {
+			var hasVideo = result.attachments && result.attachments.filter(function(x) {
 				return x.name == "selenium-screen-recording.mp4";
-			}).length;
+			}).length > 0;
+			// if we don't have an actual video, check if we have screenshots
+			if (!hasVideo) {
+				hasVideo = result.attachments && result.attachments.filter(function(attachment) {
+					return attachment.name.indexOf("selenium-screenshot-") == 0;
+				}).length > 0;
+			}
+			return hasVideo;
 		},
 		showRecording: function(result) {
 			var self = this;
+			// check if we have an actual video
 			var attachment = result.attachments && result.attachments.filter(function(x) {
 				return x.name == "selenium-screen-recording.mp4";
 			})[0];
@@ -103,21 +126,72 @@ Vue.view("test-editor", {
 						contentType: attachment.contentType,
 						url: 'data:video/mp4;base64,' + base64data.replace(/.*?;base64,/, "")
 					});
-					console.log(self.videoContent);
+				}
+			}
+			// otherwise, we want to build a selenium viewer
+			else {
+				var screenshots = result.attachments && result.attachments.filter(function(attachment) {
+					return attachment.name.indexOf("selenium-screenshot-") == 0;
+				});
+				if (screenshots.length) {
+					var scripts = this.steps.map(function(step) {
+						if (step.enabled) {
+							if (step.scriptType == "selenium-script" && step.script) {
+								return step.script;
+							}
+							else if (step.scriptType == "selenium-utility" && step.script) {
+								var definition = self.seleniumDefinitions[step.script];
+								return definition ? definition.script : null;
+							}
+						}
+					});
+					var steps = [];
+					scripts.forEach(function(script) {
+						if (script) {
+							var parsed = JSON.parse(script);
+							parsed.tests.forEach(function(test) {
+								if (test && test.commands) {
+									nabu.utils.arrays.merge(steps, test.commands);
+								}
+							})
+						}
+					});
+					Vue.set(this, "seleniumContent", {
+						screenshots: screenshots,
+						steps: steps
+					});
 				}
 			}
 		},
 		showAttachment: function(attachment) {
 			var self = this;
-			var reader = new FileReader();
-			reader.readAsDataURL(attachment.content); 
-			reader.onloadend = function() {
-				var base64data = reader.result;                
+			if (attachment.content) {
+				var reader = new FileReader();
+				reader.readAsDataURL(attachment.content); 
+				reader.onloadend = function() {
+					var base64data = reader.result;                
+					Vue.set(self, "imageContent", {
+						name: attachment.name,
+						contentType: attachment.contentType,
+						url: 'data:application/octet-stream;base64,' + base64data.replace(/.*?;base64,/, "")
+					});
+				}
+			}
+			else {
+				this.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: attachment.id}, true).then(function(url) {
+					Vue.set(self, "imageContent", {
+						name: attachment.name,
+						contentType: attachment.contentType,
+						url: url
+					});	
+				})
+				/*
 				Vue.set(self, "imageContent", {
 					name: attachment.name,
 					contentType: attachment.contentType,
-					url: 'data:application/octet-stream;base64,' + base64data.replace(/.*?;base64,/, "")
+					url: self.$services.swagger.parameters("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: attachment.id}).url
 				});
+				*/
 			}
 		},
 		isCurrentManualStep: function(result, step) {
@@ -192,7 +266,7 @@ Vue.view("test-editor", {
 				
 				// asynchronously start loading the instance as well
 				promise.then(function() {
-					var limit = Math.max(10, self.matrix.length);
+					var limit = Math.max(7, self.matrix.length);
 					console.log("running instance list!");
 					self.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.instance.list", {testCaseId: self.testCaseId, orderBy: ["started desc"], limit: limit}).then(function(result) {
 						if (result && result.results) {
@@ -235,7 +309,23 @@ Vue.view("test-editor", {
 				var stepResult = this.getResult(result, step);
 				return result.attachments.filter(function(attachment) {
 					return attachment.testCaseInstanceStepId == stepResult.id
+						&& attachment.name.indexOf("selenium-screenshot-") != 0;
 				});
+			}
+		},
+		getError: function(result, step) {
+			if (result.exception) {
+				var instance = this.getResult(result, step);	
+				// the last step, so likely the cause of the issue
+				if (result.steps.indexOf(instance) == result.steps.length - 1) {
+					// selenium exception because it can't find an element
+					if (result.exception.indexOf("org.openqa.selenium.NoSuchElementException") >= 0 && result.exception.indexOf("Session ID") >= 0) {
+						//return result.exception.substring(result.exception.indexOf("org.openqa.selenium.NoSuchElementException"), result.exception.indexOf("Session ID"));
+						var exception = result.exception.substring(result.exception.indexOf("org.openqa.selenium.NoSuchElementException")).split("\n")[0];
+						return exception.substring(exception.indexOf("Unable to"));
+					}
+					return result.exception;
+				}
 			}
 		},
 		getResult: function(result, step) {
@@ -257,13 +347,13 @@ Vue.view("test-editor", {
 				temporary: !step.enabled
 			};
 			this.editingAttachments.splice(0).forEach(function(attachment) {
-				console.log("file is", attachment);
 				result.attachments.push({
 					id: crypto.randomUUID().replace(/-/g, ""),
 					content: attachment,
 					name: attachment.name,
 					testCaseInstanceStepId: stepInstance.id,
-					testCaseInstanceId: result.id
+					testCaseInstanceId: result.id,
+					created: new Date()
 				});
 			});
 			var self = this;
@@ -373,6 +463,7 @@ Vue.view("test-editor", {
 							// set it to changed so we can toggle the save
 							lastResult.changed = true;
 							lastResult.saved = false;
+							lastResult.exception = result.exception;
 							lastResult.runType = matrix ? "matrixRun" : "quickRun";
 							// add the validations
 							lastResult.validations = result.validations;
@@ -393,12 +484,13 @@ Vue.view("test-editor", {
 							if (lastResult.attachments) {
 								// remap attachments
 								lastResult.attachments.forEach(function(attachment) {
-									if (attachment.id) {
+									if (attachment.executorId) {
 										var step = lastResult.steps.filter(function(step) {
-											return step.testCaseStepId == attachment.id;
+											return step.testCaseStepId == attachment.executorId;
 										})[0];
 										attachment.testCaseInstanceStepId = step ? step.id : null;
 									}
+									attachment.created = attachment.timestamp;
 									attachment.testCaseInstanceId = lastResult.id;
 									attachment.id = crypto.randomUUID().replace(/-/g, "");
 								})
@@ -585,9 +677,6 @@ Vue.view("test-editor", {
 			if (result.saved) {
 				// TODO
 			}
-		},
-		editStepDetails: function(step) {
-			console.log("TODO");	
 		},
 		saveResult: function(result) {
 			var self = this;
@@ -904,3 +993,235 @@ Vue.view("test-editor", {
 		}
 	}
 });
+
+
+Vue.component("test-selenium-viewer", {
+	template: "#test-selenium-viewer",
+	props: {
+		// the attachments we captured
+		screenshots: {
+			type: Array
+		},
+		// the selenium steps
+		steps: {
+			type: Array
+		}
+	},
+	data: function() {
+		return {
+			// play speed
+			speed: 1,
+			paused: true,
+			currentFrame: -1,
+			imageLoadStart: null,
+			loaded: false,
+			timer: 0,
+			timerResult: null
+		}
+	},
+	computed: {
+		currentStep: function() {
+			if (this.currentFrame >= 0) {
+				var frame = this.frames[this.currentFrame];
+				return this.steps.filter(function(x) {
+					return x.id == frame.stepId;
+				})[0];
+			}
+		},
+		// calculate the frames
+		frames: function() {
+			var self = this;
+			// establish frames first
+			// a frame is a visual change
+			var frames = [];
+			var promises = [];
+			this.steps.forEach(function(step) {
+				var screenshots = self.screenshots.filter(function(x) {
+					return x.name.indexOf("selenium-screenshot-" + step.id + "-") == 0;
+				});
+				var before = screenshots.filter(function(x) {
+					return x.name.indexOf("before") >= 0;
+				})[0];
+				var after = screenshots.filter(function(x) {
+					return x.name.indexOf("after") >= 0;
+				})[0];
+				
+				step.started = before ? before.created : null;
+				step.stopped = after ? after.created : null;
+				
+				if (before) {
+					var beforeFrame = {};
+					beforeFrame.type = "before";
+					beforeFrame.stepId = step.id;
+					beforeFrame.timestamp = before.created;
+					if (before.content) {
+						var beforePromise = self.$services.q.defer();
+						var beforeReader = new FileReader();
+						beforeReader.readAsDataURL(before.content); 
+						beforeReader.onloadend = function() {
+							var base64data = beforeReader.result;    
+							Vue.set(beforeFrame, "url", base64data);
+							beforePromise.resolve();
+						}
+						promises.push(beforePromise);
+					}
+					else {
+						promises.push(self.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: before.id}, true).then(function(url) {
+							beforeFrame.url = url;
+						}));
+						//beforeFrame.url = self.$services.swagger.parameters("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: before.id}).url;
+					}
+					frames.push(beforeFrame);
+				}
+				if (after) {
+					var afterFrame = {};
+					afterFrame.type = "after";
+					afterFrame.stepId = step.id;
+					afterFrame.timestamp = after.created;
+					if (after.content) {
+						var afterPromise = self.$services.q.defer();
+						var afterReader = new FileReader();
+						afterReader.readAsDataURL(after.content); 
+						afterReader.onloadend = function() {
+							var base64data = afterReader.result;    
+							Vue.set(afterFrame, "url", base64data);
+							afterPromise.resolve();
+						}
+						promises.push(afterPromise);
+					}
+					else {
+						promises.push(self.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: after.id}, true).then(function(url) {
+							afterFrame.url = url;
+						}));
+						//afterFrame.url = self.$services.swagger.parameters("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: after.id}).url;
+					}
+					frames.push(afterFrame);
+				}
+			});
+			// we need to calculate the duration
+			frames.forEach(function(frame, index) {
+				console.log("calculating from", frame.timestamp);
+				if (frame.timestamp) {
+					if (index < frames.length - 1) {
+						frame.duration = frames[index + 1].timestamp.getTime() - frame.timestamp.getTime();
+					}
+				}
+				// set a default duration of 500ms
+				if (!frame.duration) {
+					frame.duration = 500;
+				}
+			});
+			this.$services.q.all(promises).then(function(x) {
+				self.loaded = true;
+			});
+			return frames;
+		}
+	},
+	ready: function() {
+		this.startPlay();
+	},
+	methods: {
+		imageLoaded: function() {
+			if (this.imageLoadStart) {
+				console.log("image loaded", (new Date().getTime() - this.imageLoadStart.getTime()) + "ms");
+			}
+			// if we are not paused, we wait for the frame timeout
+			if (!this.paused && this.frames[this.currentFrame].url.indexOf("data:") != 0) {
+				this.waitAndPlay();
+			}
+		},
+		selectStep: function(step) {
+			var firstFrame = this.frames.filter(function(x) {
+				return x.stepId == step.id;
+			})[0];
+			if (firstFrame) {
+				this.currentFrame = this.frames.indexOf(firstFrame);
+			}
+		},
+		stop: function() {
+			this.paused = true;
+			this.currentFrame = 0;
+		},
+		startPlay: function() {
+			if (!this.loaded) {
+				setTimeout(this.startPlay, 100);
+			}
+			else {
+				this.paused = false;
+				// restart from beginning...
+				if (this.currentFrame >= this.frames.length - 1) {
+					this.currentFrame = -1;
+				}
+				this.play();
+			}
+		},
+		getCalculatedStateClass: function(step) {
+			var frames = this.frames.filter(function(x) {
+				return x.stepId == step.id;
+			});
+			if (frames.length == 0) {
+				return "is-variant-warning-outline";
+			}
+			// if this step has the last frame, check if there is a next step that should have a frame
+			else if (this.frames.indexOf(frames[frames.length - 1]) >= this.frames.length - 1) {
+				console.log("checking last frame");
+				if (this.steps.indexOf(step) < this.steps.length - 1) {
+					return "is-variant-danger-outline";
+				}
+			}
+			return "is-variant-success-outline";
+		},
+		waitAndPlay: function() {
+			// wait for a while to start the next frame
+			var timeout = this.frames[this.currentFrame].duration * this.speed;
+			setTimeout(this.play, timeout);
+			this.timer = timeout;
+			this.reduceTimer();
+		},
+		reduceTimer: function() {
+			var self = this;
+			var delta = Math.min(100, self.timer);
+			if (this.timerResult) {
+				clearTimeout(this.timerResult);
+			}
+			this.timerResult = setTimeout(function() {
+				self.timer -= delta;
+				if (self.timer > 0) {
+					self.reduceTimer();
+				}
+				else {
+					self.timer = 0;
+				}
+			}, delta);
+		},
+		play: function() {
+			if (!this.paused) {
+				if (this.currentFrame < this.frames.length - 1) {
+					// move to the next frame
+					this.currentFrame++;
+				}
+				else {
+					this.pause();
+				}
+			}
+		},
+		pause: function() {
+			this.paused = true;
+		}
+	},
+	watch: {
+		// for data urls the load is not consistently called
+		currentFrame: function(newValue) {
+			if (newValue >= 0) {
+				if (this.frames[newValue].url.indexOf("data:") == 0 && !this.paused) {
+					this.waitAndPlay();
+				}
+				else {
+					this.imageLoadStart = new Date();
+				}
+			}
+		}
+	}
+})
+
+

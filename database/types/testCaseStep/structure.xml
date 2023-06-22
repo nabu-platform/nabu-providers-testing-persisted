@@ -1,6 +1,7 @@
 <structure collectionName="testCaseSteps" name="testCaseStep">
     <field name="id" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" primaryKey="true" type="java.util.UUID"/>
     <field foreignKey="nabu.providers.testing.persisted.database.types.testCase:id" name="testCaseId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field minOccurs="0" name="title" type="java.lang.String"/>
     <field minOccurs="0" name="description" type="java.lang.String"/>
     <field name="depth" type="java.lang.Long"/>
     <field minOccurs="0" name="script" type="java.lang.String"/>

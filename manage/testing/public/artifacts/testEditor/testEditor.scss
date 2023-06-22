@@ -1,4 +1,14 @@
 .is-test-editor {
+	.n-absolute {
+		min-width: 100%;
+	}
+	.is-info.error {
+		.is-info-content-wrapper {
+			width: auto;
+			max-width: unset;
+			white-space: pre-wrap;
+		}
+	}
 	.n-input-combo-label {
 		display: flex;
 		align-items: center;
@@ -86,7 +96,7 @@
 	.is-description-container:not(.is-disabled) {
 		border-left: solid 5px $color-primary-base;
 		border-right: solid 5px $color-primary-base;
-		background: linear-gradient(90deg, $color-primary-lightest 0%, white 50%, $color-primary-lightest 100%);
+		background: linear-gradient(90deg, $color-primary-lightest 0%, lighten($color-primary-lightest, 5%) 50%, $color-primary-lightest 100%);
 	}
 	.is-description-container.is-disabled {
 		border-left: solid 5px $color-neutral-base;
@@ -199,5 +209,20 @@
 	.is-title {
 		padding: 0;
 		font-size: $font-size-small;
+	}
+}
+
+.test-selenium-viewer {
+	.image-player {
+		max-width: 50vw;
+	}
+	.steps .is-row:not(:last-child) {
+		button {
+			border-bottom: none;
+		}
+	}
+	.steps {
+		max-height: 80vh;
+		overflow: auto;
 	}
 }

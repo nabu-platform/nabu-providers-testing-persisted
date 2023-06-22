@@ -56,7 +56,6 @@
     </entries>
     <entries>
         <synchronize>true</synchronize>
-        <type>nabu.providers.testing.persisted.database.types.testCaseInstanceStepDetail</type>
         <x>1281</x>
         <y>984</y>
     </entries>
