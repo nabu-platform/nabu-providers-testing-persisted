@@ -1,0 +1,3 @@
+<structure name="path">
+    <field name="attachmentId" type="java.util.UUID"/>
+</structure>

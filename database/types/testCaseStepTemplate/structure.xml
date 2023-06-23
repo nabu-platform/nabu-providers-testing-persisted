@@ -6,4 +6,6 @@
     <field minOccurs="0" name="outputDefinition" type="java.lang.String"/>
     <field foreignKey="nabu.providers.testing.persisted.database.types.testProject:id" name="testProjectId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
     <field comment="You can optionally scope it to a particular test case if it is not reusable" foreignKey="nabu.providers.testing.persisted.database.types.testCase:id" minOccurs="0" name="testCaseId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field minOccurs="0" name="title" type="java.lang.String"/>
+    <field minOccurs="0" name="description" type="java.lang.String"/>
 </structure>

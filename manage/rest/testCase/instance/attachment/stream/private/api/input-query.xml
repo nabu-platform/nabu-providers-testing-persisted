@@ -1,0 +1,4 @@
+<structure name="query">
+    <field minOccurs="0" name="downloadAs" type="java.lang.String"/>
+    <field minOccurs="0" name="downloadCode" type="java.lang.String"/>
+</structure>

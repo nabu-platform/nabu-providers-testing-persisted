@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.data.model.DataModelManager" created="2023-03-24T10:14:05.088+01:00" lastModified="2023-06-22T17:32:15.426+02:00" leaf="true" version="59">
+<node artifactManager="be.nabu.eai.module.data.model.DataModelManager" created="2023-03-24T10:14:05.088+01:00" lastModified="2023-06-23T13:59:04.396+02:00" leaf="true" version="62">
     <environmentId>apollo</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
@@ -13,4 +13,5 @@
     <references>nabu.providers.testing.persisted.database.types.testCaseInstanceStep</references>
     <references>nabu.providers.testing.persisted.database.types.testCaseInstanceAttachment</references>
     <references>nabu.providers.testing.persisted.database.types.testCaseStepTemplate</references>
+    <references>nabu.providers.testing.persisted.database.types.testCaseAttachment</references>
 </node>

@@ -9,8 +9,8 @@
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testProjectInstance</type>
-        <x>627</x>
-        <y>36</y>
+        <x>944</x>
+        <y>21</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
@@ -21,14 +21,14 @@
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstance</type>
-        <x>650</x>
-        <y>344</y>
+        <x>1158</x>
+        <y>363</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstanceValidation</type>
-        <x>1234</x>
-        <y>191</y>
+        <x>1800</x>
+        <y>81</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
@@ -39,14 +39,14 @@
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstanceStep</type>
-        <x>646</x>
-        <y>883</y>
+        <x>1306</x>
+        <y>946</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
         <type>nabu.providers.testing.persisted.database.types.testCaseInstanceAttachment</type>
-        <x>1265</x>
-        <y>606</y>
+        <x>1774</x>
+        <y>704</y>
     </entries>
     <entries>
         <synchronize>true</synchronize>
@@ -58,5 +58,11 @@
         <synchronize>true</synchronize>
         <x>1281</x>
         <y>984</y>
+    </entries>
+    <entries>
+        <synchronize>true</synchronize>
+        <type>nabu.providers.testing.persisted.database.types.testCaseAttachment</type>
+        <x>597</x>
+        <y>359</y>
     </entries>
 </dataModel>

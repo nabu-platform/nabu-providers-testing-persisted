@@ -1,0 +1,31 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="4503e72232c548baa290deebbb48971d"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="6f4385ab29584332b1b90ae30cbf2340"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="2bc00862da784f1cb2ebb34078dc7a3e"
+				serviceId="nabu.providers.testing.persisted.crud.testCaseAttachment.services.delete"
+				resultName="result69863c40bde641d6b03287523dcf85a4"
+				temporaryMapping="true"
+				x="154"
+				y="106"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="160c6489f47b4274832272198b535161"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/path/attachmentId</from>
+				<to>id</to>
+			</steps>
+		</steps>
+	</steps>
+</sequence>

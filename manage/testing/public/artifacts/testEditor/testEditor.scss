@@ -2,6 +2,18 @@
 	.n-absolute {
 		min-width: 100%;
 	}
+	.highlight {
+		background-color: transparent;
+		animation: fade 1s linear;
+	}
+	@keyframes fade {
+		0%, 100% { 
+			background-color: transparent;
+		}
+		50% { 
+			background-color: $color-success-lightest;
+		}
+	}
 	.is-info.error {
 		.is-info-content-wrapper {
 			width: auto;
@@ -52,6 +64,9 @@
 	.is-depth2 {
 		margin-left: 10rem;
 	}
+	.is-depth3 {
+		margin-left: 15rem;
+	}
 	.is-type-title {
 		font-weight: bold;
 		&.is-depth0 {
@@ -59,6 +74,9 @@
 		}
 		&.is-depth1 {
 			font-size: $font-size-large;
+		}
+		&.is-depth2 {
+			font-size: $font-size-medium;
 		}
 	}
 	.automation-script {
@@ -69,8 +87,8 @@
 	}
 	.is-matrix {
 		input {
-			min-width: 10rem !important;
-			width: 10rem !important;
+			min-width: 15rem !important;
+			width: 15rem !important;
 		}
 	}
 	table {
@@ -131,7 +149,7 @@
 		}
 	}
 	:is-form-component {
-		input {
+		input[type="text"] {
 			min-width: 20rem;
 		}
 	}

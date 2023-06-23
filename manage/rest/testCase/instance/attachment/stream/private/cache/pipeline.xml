@@ -1,0 +1,4 @@
+<structure interface="nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment.stream:implementation" name="pipeline">
+    <structure name="input"/>
+    <structure name="output"/>
+</structure>

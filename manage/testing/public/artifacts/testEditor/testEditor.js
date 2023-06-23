@@ -9,15 +9,19 @@ Vue.view("test-editor", {
 	},
 	data: function() {
 		return {
+			autosave: true,
+			lastSaved: null,
+			lastSaveFailed: null,
 			showAutomation: false,
 			steps: [],
+			attachments: [],
+			running: false,
 			// the variables for this script (order matters for matrix!)
 			// for simplicity (of filling it in manually) and matrix testing, all variables should be simple types
 			// "name", "type", "default"
 			variables: [],
+			templates: [],
 			serviceDefinitions: {},
-			// centralized selenium definitions to reuse
-			seleniumDefinitions: {},
 			// centralized glue definitions to reuse
 			glueDefinitions: {},
 			showGlue: false,
@@ -40,10 +44,20 @@ Vue.view("test-editor", {
 			editingAttachments: [],
 			videoContent: null,
 			imageContent: null,
-			seleniumContent: null
+			seleniumContent: null,
+			loaded: false
 		}
 	},
 	computed: {
+		seleniumDefinitions: function() {
+			var result = {};
+			this.templates.forEach(function(template) {
+				if (template.scriptType == "selenium-utility") {
+					result[template.id] = template;
+				}
+			});
+			return result;
+		},
 		glue: function() {
 			return this.buildGlue();
 		},
@@ -70,12 +84,46 @@ Vue.view("test-editor", {
 		this.load().then(done, done);
 	},
 	methods: {
+		saveTemplate: function(template) {
+			return this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.update", {
+				id: template.id,
+				body: template
+			});
+		},
+		newTemplate: function(scriptType) {
+			var self = this;
+			this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.create", {
+				body: {
+					scriptType: scriptType,
+					testProjectId: this.testCase.testProjectId
+				}
+			}).then(function(result) {
+				self.templates.push(result);
+			})
+		},
+		deleteTemplate: function(template) {
+			var self = this;
+			this.$confirm({
+				message: "Are you sure you want to delete this template?"
+			}).then(function() {
+				self.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.create", {
+					id: template.id
+				}).then(function() {
+					self.templates.splice(self.templates.indexOf(template), 1);
+				})
+			})
+		},
+		getTemplates: function(scriptType) {
+			return this.templates.filter(function(x) {
+				return x.scriptType == scriptType;
+			})	
+		},
 		variableUsed: function(variable) {
 			var used = false;
 			this.steps.forEach(function(step) {
 				console.log("checking step", step);
 				Object.values(step.inputBindingsObject).forEach(function(value) {
-					if (value.indexOf("variables." + variable.name + ".") == 0 || value == "variables." + variable.name) {
+					if (value && value.indexOf("variables." + variable.name + ".") == 0 || value == "variables." + variable.name) {
 						used = true;
 					}
 				})
@@ -177,8 +225,18 @@ Vue.view("test-editor", {
 					});
 				}
 			}
-			else {
+			// if it is a step attachment, we need to use that service
+			else if (attachment.testCaseStepId) {
 				this.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: attachment.id}, true).then(function(url) {
+					Vue.set(self, "imageContent", {
+						name: attachment.name,
+						contentType: attachment.contentType,
+						url: url
+					});	
+				})
+			}
+			else {
+				this.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment.stream", {attachmentId: attachment.id}, true).then(function(url) {
 					Vue.set(self, "imageContent", {
 						name: attachment.name,
 						contentType: attachment.contentType,
@@ -237,6 +295,12 @@ Vue.view("test-editor", {
 					}
 					self.recalculateTypes();
 				}));
+				promises.push(this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseAttachment.services.list", {testCaseId: this.testCaseId}).then(function(x) {
+					self.attachments.splice(0);
+					if (x && x.results) {
+						nabu.utils.arrays.merge(self.attachments, x.results);
+					}
+				}));
 				this.$services.q.all(promises).then(function() {
 					var serviceIds = [];
 					self.steps.filter(function(x) {
@@ -246,22 +310,29 @@ Vue.view("test-editor", {
 							serviceIds.push(x.script);
 						}
 					});
+					var childPromises = [];
 					if (serviceIds.length) {
-						self.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.service.list", {
-							serviceIds: serviceIds
-						}).then(function(result) {
-							console.log("resolved", result);
-							if (result && result.results) {
-								result.results.forEach(function(x) {
-									self.serviceDefinitions[x.id] = x;
-								})
-							}
-							promise.resolve();
-						}, promise);
+						childPromises.push(self.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.service.list", {
+								serviceIds: serviceIds
+							}).then(function(result) {
+								console.log("resolved", result);
+								if (result && result.results) {
+									result.results.forEach(function(x) {
+										self.serviceDefinitions[x.id] = x;
+									})
+								}
+								promise.resolve();
+						}));
 					}
-					else {
-						promise.resolve();
-					}
+					childPromises.push(self.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.list", { testProjectId: self.testCase.testProjectId }).then(function(result) {
+						if (result && result.results) {
+							nabu.utils.arrays.merge(self.templates, result.results);
+						}
+					}));
+					self.$services.q.all(childPromises).then(function(result) {
+						self.loaded = true;
+						promise.resolve(result);
+					}, promise);
 				}, promise);
 				
 				// asynchronously start loading the instance as well
@@ -286,6 +357,15 @@ Vue.view("test-editor", {
 			}
 			return this.$services.q.reject();
 		},
+		debounceSave: function() {
+			if (this.loaded && this.autosave) {
+				if (this.saveTimer) {
+					clearTimeout(this.saveTimer);
+					this.saveTimer = null;
+				}
+				this.saveTimer = setTimeout(this.save, 600);
+			}
+		},
 		save: function() {
 			var self = this;
 			this.steps.forEach(function(step) {
@@ -302,7 +382,12 @@ Vue.view("test-editor", {
 					steps: this.steps
 				}
 			}));
-			return this.$services.q.all(promises);
+			return this.$services.q.all(promises).then(function() {
+				self.lastSaveFailed = null;
+				self.lastSaved = new Date();
+			}, function() {
+				self.lastSaveFailed = new Date();
+			});
 		},
 		getAttachmentsFor: function(result, step) {
 			if (result.attachments) {
@@ -334,6 +419,42 @@ Vue.view("test-editor", {
 					return x.testCaseStepId == step.id;
 				})[0];
 			}
+		},
+		editStepDefinition: function(step) {
+			this.editingStepDefinition = step;	
+			this.editingAttachments.splice(0);
+			nabu.utils.arrays.merge(this.editingAttachments, this.attachments.filter(function(x) {
+				return x.testCaseStepId == step.id;
+			}));
+		},
+		uploadStepAttachments: function(step) {
+			var self = this;
+			var attachmentsToProcess = this.editingAttachments.splice(0);
+			attachmentsToUpload = attachmentsToProcess.filter(function(x) {
+				return self.attachments.indexOf(x) < 0;
+			});
+			attachmentsToRemove = this.attachments.filter(function(attachment) {
+				return attachment.testCaseStepId == step.id
+			}).filter(function(x) {
+				return attachmentsToProcess.indexOf(x) < 0;
+			});
+			attachmentsToUpload.forEach(function(x) {
+				self.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.attachment.upload", {body:x, testCaseId: self.testCaseId, testCaseStepId: step.id}).then(function(x) {
+					if (x) {
+						self.attachments.push(x);
+					}
+				});
+			});
+			attachmentsToRemove.forEach(function(x) {
+				self.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.attachment.delete", { attachmentId: x.id }).then(function() {
+					self.attachments.splice(self.attachments.indexOf(x), 1);
+				})
+			});
+		},
+		getAttachmentsForStep: function(step) {
+			return this.attachments.filter(function(x) {
+				return x.testCaseStepId == step.id;
+			});
 		},
 		setResult: function(result, step, severity) {
 			var now = new Date();
@@ -445,6 +566,7 @@ Vue.view("test-editor", {
 		runScript: function(matrix, untilIndex) {
 			var self = this;
 			var promise = this.$services.q.defer();
+			this.running = true;
 			this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.testRun", { body: { script : this.buildGlue(untilIndex), matrix: matrix ? this.buildMatrix() : null, attachments: this.buildAttachments() }}).then(function(x) {
 				if (x && x.results && x.results.length) {
 					x.results.forEach(function(result) {
@@ -504,6 +626,10 @@ Vue.view("test-editor", {
 					})
 				}
 			}, promise);
+			var done = function() {
+				self.running = false;
+			}
+			promise.then(done, done);
 			return promise;
 		},
 		buildMatrix: function() {
@@ -590,9 +716,27 @@ Vue.view("test-editor", {
 				// an embedded selenium script or a utility, they only differ in how the attachments are created
 				else if ((step.scriptType == "selenium-script" || step.scriptType == "selenium-utility") && step.script) {
 					hasSelenium = true;
+					glue += "\n";
+					// we want to inject the variables that will be used
+					var inputBindings = self.getInputBindings(step);
+					Object.keys(inputBindings).forEach(function(key) {
+						if (inputBindings[key]) {
+							glue += "$selenium" + key + " = " + inputBindings[key].replace(/^variables\./, "").replace(/\./g, "/") + "\n";
+						}
+					});
 					// we assume there will be a script
-					glue += "\n@id " + step.id + "\n"
-					glue += "selenium.selenese($webdriver, resource('selenium-" + step.id + ".json'))\n"
+					glue += "@id " + step.id + "\n"
+					glue += "selenium.selenese($webdriver, template(resource('selenium-" + step.id + ".json')))\n"
+					if (step.outputBindings) {
+						glue += step.outputBindings + " = structure("
+						self.getOutputVariables(step).forEach(function(variable, index) {
+							if (index > 0) {
+								glue += ",";
+							}
+							glue += "\n\t" + variable + ": $selenium" + variable
+						});
+						glue += ")\n"
+					}
 				}
 			})
 			if (hasSelenium) {
@@ -601,32 +745,57 @@ Vue.view("test-editor", {
 			}
 			return glue;
 		},
+		getSeleniumScript: function(step) {
+			var template = this.templates.filter(function(x) {
+				return x.id == step.script;
+			})[0];
+			if (template) {
+				step = template;
+			}
+			return step.script;
+		},
 		buildAttachments: function() {
 			var attachments = [];
 			var self = this;
+			// selenium variables are matched on name, we don't want to accidently collide with other variables
+			var rewriteSeleniumVariables = function(script) {
+				return script.replace(/\$\{([^}]+)\}/g, "$" + "{$selenium$1}");
+			}
 			this.steps.filter(function(x) { return x.enabled }).forEach(function(step) {
-				if (step.scriptType == "selenium-script" && step.script) {
-					var blob = new Blob([step.script], { type : 'application/json' });
-					attachments.push({
-						name: "selenium-" + step.id + ".json",
-						content: blob,
-						contentType: "application/json"
-					})
-				}
-				else if (step.scriptType == "selenium-utility" && step.script) {
-					var definition = self.seleniumDefinitions[step.script];
-					if (definition && definition.script) {
-						var blob = new Blob([definition.script], { type : 'application/json' });
+				if ((step.scriptType == "selenium-script" || step.scriptType == "selenium-utility") && step.script) {
+					var script = self.getSeleniumScript(step);
+					if (script) {
+						// rewrite the output variables
+						try {
+							var parsed = JSON.parse(script);
+							if (parsed.tests) {
+								parsed.tests.forEach(function(test) {
+									if (test.commands) {
+										test.commands.forEach(function(command) {
+											if (command.command == "storeText") {
+												command.value = "$selenium" + command.value;
+											}
+										})
+									}
+								})
+							}
+							script = JSON.stringify(parsed);
+						}
+						catch (exception) {
+							console.error("Could not rewrite selenium script", exception);
+						}
+						var blob = new Blob([rewriteSeleniumVariables(script)], { type : 'application/json' });
 						attachments.push({
 							name: "selenium-" + step.id + ".json",
 							content: blob,
 							contentType: "application/json"
-						});
+						})
 					}
 				}
 			});
 			return attachments;
 		},
+		
 		generateSeleniumInterface: function(step, script) {
 			var inputDefinition = null;
 			var outputDefinition = null;
@@ -730,11 +899,12 @@ Vue.view("test-editor", {
 			return step;
 		},
 		updateService: function(step, service, type) {
-			type = type.toLowerCase().replace(/[\s]+/g, "-");
-			Vue.set(step, "scriptType", type);	
+			//type = type.toLowerCase().replace(/[\s]+/g, "-");
+			//Vue.set(step, "scriptType", type);
 			Vue.set(step, "script", service ? service.id : null);
 			Vue.set(step, "inputDefinition", service ? service.inputDefinition : null);
 			Vue.set(step, "outputDefinition", service ? service.outputDefinition : null);
+			this.debounceSave();
 		},
 		getServiceInformation: function(service) {
 			return this.serviceDefinitions[service];	
@@ -743,8 +913,14 @@ Vue.view("test-editor", {
 			console.log("resolving", service, this.serviceDefinitions[service]);
 			return this.serviceDefinitions[service];	
 		},
+		suggestSeleniumUtilities: function(value) {
+			return this.templates.filter(function(x) {
+				return x.scriptType == "selenium-utility";
+			}).filter(function(x) {
+				return !value || (x.title && x.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) || (x.description && x.description.toLowerCase().indexOf(value.toLowerCase()) >= 0);
+			});
+		},
 		suggestServices: function(value, label) {
-			console.log("suggesting from", label);
 			var self = this;
 			return this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.service.list", {
 				folderId: this.showAllServices ? null : (this.testCase && this.testCase.utilityFolderId ? this.testCase.utilityFolderId : this.serviceFolder),
@@ -797,10 +973,36 @@ Vue.view("test-editor", {
 		setInputBindings: function(step, value) {
 			step.inputBindings = value ? JSON.stringify(value) : null;
 		},
+		getInputVariables: function(step) {
+			var definition = this.getInputDefinition(step);
+			return definition ? this.$services.page.getSimpleKeysFor(definition) : [];
+		},
+		getOutputVariables: function(step) {
+			var definition = this.getOutputDefinition(step);
+			return definition ? this.$services.page.getSimpleKeysFor(definition) : [];
+		},
+		hasInputDefinition: function(step) {
+			return Object.keys(this.getInputDefinition(step)).length > 0;			
+		},
+		hasOutputDefinition: function(step) {
+			return Object.keys(this.getOutputDefinition(step)).length > 0;
+		},
 		getInputDefinition: function(step) {
+			var template = this.templates.filter(function(template) {
+				return template.id == step.script;
+			})[0];
+			if (template) {
+				step = template;
+			}
 			return step.inputDefinition ? JSON.parse(step.inputDefinition) : {};
 		},
 		getOutputDefinition: function(step) {
+			var template = this.templates.filter(function(template) {
+				return template.id == step.script;
+			})[0];
+			if (template) {
+				step = template;
+			}
 			var result = {};
 			if (step.outputDefinition) {
 				nabu.utils.objects.merge(result, JSON.parse(step.outputDefinition));
@@ -848,9 +1050,10 @@ Vue.view("test-editor", {
 		},
 		update: function(step, $event) {
 			var content = $event.target.innerHTML;
-			var current = step.description;
+			var current = step.title;
 			if (content != current) {
-				step.description = content;
+				step.title = content;
+				this.debounceSave();
 			}
 		},
 		recalculateTypes: function() {
@@ -871,7 +1074,7 @@ Vue.view("test-editor", {
 					step.depth--;
 				}
 			}
-			else {
+			else if (step.depth < 3) {
 				step.depth++;
 			}
 			// changing the depth of a step might affect the previous step
@@ -920,6 +1123,7 @@ Vue.view("test-editor", {
 			if (index >= 0) {
 				this.steps.splice(index, 1);
 			}
+			this.debounceSave();
 		},
 		moveVariable: function(variable, amount) {
 			var index = this.variables.indexOf(variable);
@@ -947,6 +1151,7 @@ Vue.view("test-editor", {
 			this.steps.splice(newIndex, 0, step);
 			this.recalculateTypes();
 			this.focus(newIndex);
+			this.debounceSave();
 		},
 		shift: function(step, amount) {
 			var index = this.steps.indexOf(step);
@@ -970,6 +1175,22 @@ Vue.view("test-editor", {
 		}
 	},
 	watch: {
+		"lastSaved": function() {
+			var self = this;
+			if (this.$refs.lastSaved) {
+				this.$refs.lastSaved.classList.remove("highlight");	
+			}
+			Vue.nextTick(function() {
+				if (self.$refs.lastSaved) {
+					self.$refs.lastSaved.classList.add("highlight");
+					setTimeout(function() {
+						if (self.$refs.lastSaved) {
+							self.$refs.lastSaved.classList.remove("highlight");	
+						}
+					}, 1000);
+				}
+			})
+		},
 		"variables": {
 			deep: true,
 			handler: function(newValue) {
@@ -989,6 +1210,21 @@ Vue.view("test-editor", {
 				if (oldValue && newValue != this.manual) {
 					newValue.changed = true;
 				}
+			}
+		},
+		// too aggressive because we keep stuff like "show" and "expanded" in there... not ideal but it is what it is
+		/*
+		'steps': {
+			deep: true,
+			handler: function() {
+				this.debounceSave();
+			}
+		},
+		*/
+		'testCase': {
+			deep: true,
+			handler: function() {
+				this.debounceSave();
 			}
 		}
 	}
@@ -1066,7 +1302,7 @@ Vue.component("test-selenium-viewer", {
 						promises.push(beforePromise);
 					}
 					else {
-						promises.push(self.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: before.id}, true).then(function(url) {
+						promises.push(self.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment.stream", {attachmentId: before.id}, true).then(function(url) {
 							beforeFrame.url = url;
 						}));
 						//beforeFrame.url = self.$services.swagger.parameters("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: before.id}).url;
@@ -1090,7 +1326,7 @@ Vue.component("test-selenium-viewer", {
 						promises.push(afterPromise);
 					}
 					else {
-						promises.push(self.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: after.id}, true).then(function(url) {
+						promises.push(self.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment.stream", {attachmentId: after.id}, true).then(function(url) {
 							afterFrame.url = url;
 						}));
 						//afterFrame.url = self.$services.swagger.parameters("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: after.id}).url;

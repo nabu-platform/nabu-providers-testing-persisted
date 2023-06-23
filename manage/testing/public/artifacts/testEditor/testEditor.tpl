@@ -2,7 +2,8 @@
 	<div class="is-column is-spacing-gap-medium is-test-editor">
 		<div class="is-row">
 			<button @click="configurationTab = 'editor'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'editor'}">Editor</button>
-			<button :disabled="!variables.length" @click="configurationTab = 'matrix'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'matrix'}">Variables</button>
+			<button @click="configurationTab = 'matrix'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'matrix'}">Variables</button>
+			<button @click="configurationTab = 'utilities'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'utilities'}">Utilities</button>
 			<button @click="configurationTab = 'settings'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'settings'}">Settings</button>
 		</div>
 		<n-form class="is-variant-vertical" content-class="is-row is-spacing-small is-spacing-gap-xsmall" v-if="configurationTab == 'variables'">
@@ -24,7 +25,7 @@
 			<n-form-text v-model="testCase.utilityFolderId" label="Utility Folder Id"/>
 			<n-form-text v-model="testCase.description" type="area" label="Description"/>
 		</n-form>
-		<n-form class="is-variant-horizontal is-small is-matrix" content-class="is-column is-spacing-small" v-else-if="configurationTab == 'matrix'">
+		<n-form class="is-variant-horizontal is-matrix" content-class="is-column is-spacing-small" v-else-if="configurationTab == 'matrix'">
 			<div class="is-row is-spacing-gap-small" v-if="false">
 				<div class="is-tag" v-for="(variable, index) in variables">
 					<span class="is-text">
@@ -63,18 +64,41 @@
 				<button class="is-button is-variant-primary-outline is-size-xsmall" @click="matrix.push({})"><icon name="plus"/><span class="is-text">Variant</span></button>
 			</div>
 		</n-form>
+		<div class="is-column is-spacing-gap-medium" v-else-if="configurationTab == 'utilities'">
+			<n-collapsible title="Selenium utilities" :start-open="true" :only-one-open="true" content-class="is-spacing-medium">
+				<div class="is-row is-pattern-basic-alternating is-spacing-gap-medium is-align-start">
+					<n-form class="is-variant-vertical" content-class="is-column is-spacing-medium is-shadow-xsmall has-button-close" v-for="template in getTemplates('selenium-utility')">
+						<button class="is-button is-size-small is-variant-close" @click="deleteTemplate(template)"><icon name="times"/></button>
+						<n-form-text v-model="template.title" label="Title" :timeout="600" @input="saveTemplate(template)"/>
+						<n-form-text type="area" v-model="template.script" label="Selenium script" :timeout="600" @input="function(script) { generateSeleniumInterface(template, script); saveTemplate(template) }"/>
+						<div class="is-row is-spacing-gap-small" v-if="getInputVariables(template).length"><span class="is-content is-size-small">Inputs:</span><span class="is-badge" v-for="variable in getInputVariables(template)">{{variable}}</span></div>
+						<div class="is-row is-spacing-gap-small" v-if="getOutputVariables(template).length"><span class="is-content is-size-small">Outputs:</span><span class="is-badge" v-for="variable in getOutputVariables(template)">{{variable}}</span></div>
+					</n-form>
+				</div>
+				<div class="is-row">
+					<button class="is-button is-variant-primary-outline is-size-small" @click="newTemplate('selenium-utility')"><icon name="plus"/><span class="is-text">Selenium utility</span></button>
+				</div>
+			</n-collapsible>
+			<n-collapsible title="Glue utilities" :only-one-open="true">
+				
+			</n-collapsible>
+		</div>
 		<div class=" is-column is-spacing-gap-medium" v-else>
 			<div class="is-column is-spacing-gap-medium">
 				<ul class="is-menu is-variant-toolbar">
-					<li class="is-column"><button class="is-button is-size-small is-variant-primary-outline" @click="save"><icon name="save"/><span class="is-text">Save</span></button></li>
+					<li class="is-column" v-if="!autosave"><button class="is-button is-size-small is-variant-primary-outline" @click="save"><icon name="save"/><span class="is-text">Save</span></button></li>
 					<li class="is-column"><button class="is-button is-size-small is-variant-secondary-outline" @click="showGlue = true"><icon name="search"/><span class="is-text">Raw</span></button></li>
 					<li class="is-column" v-if="false"><button class="is-button is-size-small" @click="showConfiguration = true"><icon name="cog"/><span class="is-text">Configure</span></button></li>
-					<li class="is-column" v-if="!manual"><button class="is-button is-size-small is-variant-primary" @click="runScript(false)"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
-					<li class="is-column" v-if="!manual"><button :disabled="matrix.length == 0 || variables.length == 0" class="is-button is-size-small is-variant-danger" @click="runMatrix"><icon name="play"/><span class="is-text">Run Matrix</span></button></li>
-					<li class="is-column" v-if="!manual"><button class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
+					<li class="is-column" v-if="!manual && !running"><button class="is-button is-size-small is-variant-primary" @click="runScript(false)"><icon name="play"/><span class="is-text">Run Automated</span></button></li>
+					<li class="is-column" v-if="!manual && !running"><button :disabled="matrix.length == 0 || variables.length == 0" class="is-button is-size-small is-variant-danger" @click="runMatrix"><icon name="play"/><span class="is-text">Run Matrix</span></button></li>
+					<li class="is-column" v-if="!manual && !running"><button class="is-button is-size-small is-variant-secondary" @click="runManual"><icon name="hand-pointer"/><span class="is-text">Run Manual</span></button></li>
 					<li class="is-column" v-if="manual"><button class="is-button is-size-small is-variant-danger" @click="stopManual"><icon name="stop"/><span class="is-text">Stop Manual</span></button></li>
+					<li class="is-column" v-if="running"><button class="is-button is-size-small is-variant-danger"><icon name="cog"/><span class="is-text">Running...</span></button></li>
+					<li class="is-column" v-if="lastSaved"><button class="is-button is-size-small" ref="lastSaved"><icon name="save"/><span class="is-text">Last saved: {{$services.formatter.date(lastSaved, 'HH:mm:ss')}}</span></button></li>
+					<li class="is-column" v-if="lastSaveFailed"><button class="is-button is-size-small is-variant-danger-outline"><icon name="save"/><span class="is-text">Last save failed: {{$services.formatter.date(lastSaveFailed, 'HH:mm:ss')}}</span></button></li>
 				</ul>
 				<n-form-switch v-model="showAutomation" label="Show automation"/>
+				<n-form-switch v-model="autosave" label="Autosave"/>
 			</div>
 			<n-form mode="component">
 				<table class="is-table">
@@ -99,7 +123,7 @@
 					<tbody>
 						<tr v-for="(step, index) in steps" v-show="isVisibleStep(step)" :key="step.id" class="step" :class="{'is-disabled': !step.enabled}">
 							<td class="is-border-none"><div class="is-column"><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, -1)"><icon name="chevron-up"/></button><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, 1)"><icon name="chevron-down"/></button></div></td>
-							<td><div class="is-row is-spacing-small is-align-center"><button class="is-button is-variant-ghost is-size-xsmall" @click="addAfter(index)"><icon name="plus"/></button><span class="is-text is-line-number">{{formatLineNumber(index)}}</span><n-form-switch class="is-size-small" v-model="step.enabled"/><button class="is-button is-variant-ghost is-size-xsmall" @click="remove(step)"><icon class="is-color-danger-outline" name="times"/></button></div></td>
+							<td><div class="is-row is-spacing-small is-align-center"><button class="is-button is-variant-ghost is-size-xsmall" @click="addAfter(index)"><icon name="plus"/></button><span class="is-text is-line-number">{{formatLineNumber(index)}}</span><n-form-switch class="is-size-small" v-model="step.enabled" @input="debounceSave"/><button class="is-button is-variant-ghost is-size-xsmall" @click="remove(step)"><icon class="is-color-danger-outline" name="times"/></button></div></td>
 							<td :class="{'is-disabled': !step.enabled}" class="is-description-container"><div class="is-row is-spacing-gap-small is-details-container">
 									<button class="is-button is-variant-ghost is-size-xsmall" v-if="step.type == 'title' && step.expanded" @click="step.expanded = !step.expanded" :disabled="manual"><icon name='minus-square'/></button>
 									<button class="is-button is-variant-ghost is-size-xsmall" v-if="step.type == 'title' && !step.expanded" @click="step.expanded = !step.expanded" :disabled="manual"><icon name='plus-square'/></button>
@@ -119,10 +143,17 @@
 										@keyup="update(step, $event)" 
 										@blur="update(step, $event)" 
 										@input="update(step, $event)"></div></div>
-									<button class="is-button is-edit-details is-variant-ghost is-size-xsmall" @click="editingStepDefinition = step"><icon name="search"/></button>
-								</div><n-absolute top="100%" left="0" v-if="editingStepDefinition == step" :autoclose="true" @close="function() { editingStepDefinition = null }">
+									<button class="is-button is-edit-details is-variant-ghost is-size-xsmall" @click="editStepDefinition(step)"><icon name="search"/></button>
+								</div><n-absolute top="100%" left="0" v-if="editingStepDefinition == step" :autoclose="true" @close="function() { editingStepDefinition = null; uploadStepAttachments(step); }">
 								<n-form class="is-variant-vertical is-popup-form">
-									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes using markdown syntax"/>
+									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes using markdown syntax" @input="debounceSave"/>
+									<n-input-file :types="['image/*']" ref='form'
+										:value='editingAttachments'
+										browse-label="Browse or drag files"
+										browse-icon="plus"
+										:visualize-file-names="true"
+										class="is-column"
+										/>
 								</n-form>
 							</n-absolute></td>
 							<td v-if="showAutomation && step.scriptType == 'glue'"><textarea 
@@ -139,6 +170,7 @@
 									:items="[{name: 'service', label: 'Service'}, {name: 'selenium-utility', label: 'Selenium Utility'}, {name: 'selenium-script', label: 'Selenium Script'}]"
 									:formatter="function(x) { return x.label }"
 									:extracter="function(x) { return x.name }"
+									@input="debounceSave"
 									/>
 							</td>
 							<td v-if="showAutomation">
@@ -157,8 +189,19 @@
 											:extracter="function(x) { return x.id }"
 											@input="function(value, label, rawValue, selectedLabel) { updateService(step, rawValue, selectedLabel) }"
 											/>
-										<n-form-text class="is-fill-normal is-small-area" type="area" v-else-if="step.scriptType == 'selenium-script'" v-model="step.script" @input="function(value) { generateSeleniumInterface(step, value) }" />
-										<button class="is-button is-size-small is-variant-ghost has-tooltip" @click="step.show = !step.show; closeOther(step)" v-if="step.script && (step.inputDefinition || step.outputDefinition)"><icon name="search"/><span class="is-tooltip">Show data mapping</span></button>
+										<n-form-text class="is-fill-normal is-small-area" type="area" v-else-if="step.scriptType == 'selenium-script'" v-model="step.script" @input="function(value) { generateSeleniumInterface(step, value);debounceSave() }" />
+										<n-form-combo 
+											v-if="step.scriptType == 'selenium-utility'"
+											v-model="step.script"
+											label="Selenium Utility"
+											class="is-variant-test-editor-services is-label-horizontal"
+											:timeout="600"
+											:filter="suggestSeleniumUtilities"
+											:formatter="function(x) { return x.title ? x.title : 'Untitled' }"
+											:extracter="function(x) { return x.id }"
+											@input="debounceSave"
+											/>
+										<button class="is-button is-size-small is-variant-ghost has-tooltip" @click="step.show = !step.show; closeOther(step)" v-if="step.script && (hasInputDefinition(step) || hasOutputDefinition(step))"><icon name="search"/><span class="is-tooltip">Show data mapping</span></button>
 										<n-info v-if="step.script && getServiceInformation(step.script) && (getServiceInformation(step.script).summary || getServiceInformation(step.script).description)">
 											<p class="summary" v-if="getServiceInformation(step.script).summary" v-html="getServiceInformation(step.script).summary"></p>
 											<p class="description" v-if="getServiceInformation(step.script).description" v-html="getServiceInformation(step.script).description"></p>
@@ -167,7 +210,7 @@
 									<div class="is-row is-spacing-gap-large is-align-start" v-if="step.show">
 										<div class="is-column is-spacing-small is-fill-normal is-input-container">
 											<h4 class="is-h4">Input</h4>
-											<n-form class="is-variant-floating-labels" v-if="step.inputDefinition">
+											<n-form class="is-variant-floating-labels" v-if="hasInputDefinition(step)">
 												<n-page-mapper :to="getInputDefinition(step)"
 													:watch-for-changes="true"
 													:allow-computed="false"
@@ -175,6 +218,7 @@
 													:from="getPipeline(step)" 
 													:key="'step-input-mapper-' + index"
 													v-model="step.inputBindingsObject"
+													@changed="debounceSave"
 													/>
 											</n-form>
 										</div>
@@ -184,9 +228,10 @@
 												label="Variable name"
 												class="is-label-horizontal"
 												placeholder="Capture the output as a variable" 
-												v-if="step.outputDefinition"
+												v-if="hasOutputDefinition(step)"
 												:validator="validateVariableName"
 												:validate-on-blur="true"
+												@input="debounceSave"
 												/>
 											<span class="is-content is-variant-subscript">You can capture the value to use in later steps. Note that you must use camelCase naming convention for the variable name.</span>
 										</div>
@@ -212,6 +257,7 @@
 										<li class="is-column"><button class="is-button is-size-small is-variant-neutral-outline" @click="editingStep = step"><icon name="pencil-alt"/><span class="is-text">Edit</span></button></li>
 									</ul>
 									<p v-if="step.description" v-html="$services.formatter.format(step.description, {format: 'markdown'})"/>
+									<div class="is-row"><button class="is-button is-size-small is-variant-ghost" v-for="attachment in getAttachmentsForStep(step)" @click="showAttachment(attachment)"><icon name="image"/></button></div>
 								</div>
 								<div v-else-if="result == manual && result.runType == 'manual' && !isCurrentManualStep(result,step) && !result.stopped && result.steps.length == 0">
 									<button class="is-button is-size-small" @click="runUntil(step)"><icon name="play" class="is-size-xxsmall"/><span class="is-text">Automatically run until here</span></button>
@@ -281,7 +327,7 @@
 			<div class="is-row is-spacing-gap-small">
 				<div class="steps is-column">
 					<div v-for="step in steps" class="is-row">
-						<button :class="[{'is-active': currentStep == step}, getCalculatedStateClass(step)]" class="is-button is-fill-normal is-border-radius-none" @click="selectStep(step)"><span class="is-text">{{step.command}}</span><span v-if="step.value"> {{step.value}}</span><span v-if="step.target"> on {{step.target}}</span></button>
+						<button :class="[{'is-active': currentStep == step}, getCalculatedStateClass(step)]" class="is-button is-size-small is-fill-normal is-border-radius-none" @click="selectStep(step)"><span class="is-text">{{step.command}}</span><span v-if="step.value"> {{step.value}}</span><span v-if="step.target"> on {{step.target}}</span></button>
 					</div>
 				</div>
 				<div class="player">

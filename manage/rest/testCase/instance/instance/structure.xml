@@ -1,5 +1,5 @@
 <structure name="instance" superType="nabu.providers.testing.persisted.database.types.testCaseInstance">
     <structure collectionName="testCaseInstanceSteps" definition="nabu.providers.testing.persisted.database.types.testCaseInstanceStep" maxOccurs="unbounded" minOccurs="0" name="steps"/>
     <structure collectionName="testCaseInstanceValidations" definition="nabu.providers.testing.persisted.database.types.testCaseInstanceValidation" maxOccurs="unbounded" minOccurs="0" name="validations"/>
-    <structure definition="nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment" maxOccurs="unbounded" minOccurs="0" name="attachments" restrict="uri"/>
+    <structure definition="nabu.providers.testing.persisted.manage.rest.testCase.instance.attachmentContent" maxOccurs="unbounded" minOccurs="0" name="attachments" restrict="uri"/>
 </structure>

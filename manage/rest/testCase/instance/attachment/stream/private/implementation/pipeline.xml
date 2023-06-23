@@ -1,0 +1,5 @@
+<structure interface="nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment.stream:api" name="pipeline">
+    <structure name="input"/>
+    <structure name="output"/>
+    <structure collectionName="testCaseInstanceAttachments" definition="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.types.output" name="attachment"/>
+</structure>

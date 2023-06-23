@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-22T10:12:11.421+02:00" lastModified="2023-06-23T10:28:14.119+02:00" leaf="true" version="19">
+    <environmentId>apollo</environmentId>
+    <hidden>false</hidden>
+    <locked>false</locked>
+    <properties/>
+    <references>nabu.frameworks.datastore.Services.retrieve</references>
+    <references>java.lang.Long</references>
+    <references>java.util.Date</references>
+    <references>java.lang.Boolean</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.services.get</references>
+    <references>java.lang.String</references>
+    <references>nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.types.output</references>
+    <references>java.lang.Integer</references>
+    <references>java.io.InputStream</references>
+</node>

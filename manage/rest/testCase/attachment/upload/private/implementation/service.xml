@@ -1,0 +1,136 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="d2144e8e94244e6e94576f5a2b4901f0"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="9f646208fc4d4bfd8a29ae2996c8ce17"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="483db1014bd64629ab46512e27a808da"
+				serviceId="nabu.frameworks.datastore.Services.store"
+				resultName="result80ebbed00e6e443887085646f2812eb1"
+				temporaryMapping="true"
+				x="172"
+				y="68"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="f0a20fdb467d4d5893075e736d6fd421"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content</from>
+				<to>stream</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="ecf33c36a7924146a7587642dbb6b43f"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/meta/contentType</from>
+				<to>contentType</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="bdc1f1d37d424db0aed85a2cbcd6ebb3"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/meta/fileName</from>
+				<to>name</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="1a763778656f463da3fcdbded891d2c5"
+				serviceId="nabu.providers.testing.persisted.crud.testCaseAttachment.services.create"
+				resultName="resultef3130cae2c046f7837afabc498717e3"
+				temporaryMapping="true"
+				x="544"
+				y="113"
+				invocationOrder="1"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="b297625d75a946169cc9c31d738e2b2f"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/path/testCaseId</from>
+				<to>instance/testCaseId</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="7e2eb952841343ee8edf90756bc788a4"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>result80ebbed00e6e443887085646f2812eb1/uri</from>
+				<to>instance/uri</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="fdd8351046cd4034b6dd0a02cec854a9"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/query/testCaseStepId</from>
+				<to>instance/testCaseStepId</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="30cf3eac8e444e5da6bc8be888a91190"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/meta/fileName</from>
+				<to>instance/name</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="2cf7bca6b1b847e0a57d88ade515f763"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/meta/contentType</from>
+				<to>instance/type</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="7b0112dd58364d119190989035f575fe"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>result394768a9a93241a6884223946a97156e/date</from>
+				<to>instance/created</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="f016efd85c29491ba02c941ef81d7129"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>resultef3130cae2c046f7837afabc498717e3/created</from>
+			<to>output/content</to>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="827bfd982af8478c8c3a7085b2f1d41f"
+				serviceId="nabu.utils.Date.now"
+				resultName="result394768a9a93241a6884223946a97156e"
+				temporaryMapping="true"
+				x="88"
+				y="337"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+		</steps>
+	</steps>
+</sequence>

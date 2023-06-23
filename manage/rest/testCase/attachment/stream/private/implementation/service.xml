@@ -8,18 +8,18 @@
 			lineNumber="2">
 		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
 				disabled="false"
-				id="af352e446d2640b48352aaf5879e0e55"
-				serviceId="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.services.get"
-				resultName="result9dd712338bfb4ef585c5f524db782778"
+				id="92bc1c3440474d04991e4c18f1677e04"
+				serviceId="nabu.providers.testing.persisted.crud.testCaseAttachment.services.get"
+				resultName="resultcb774a9533244be5b1040c8e516b4b98"
 				temporaryMapping="true"
-				x="141"
-				y="48"
+				x="165"
+				y="76"
 				invocationOrder="0"
 				asynchronous="false"
 				recache="false">
 			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 					disabled="false"
-					id="7ef003632e5a4aa7bbfee81acb6fe48c"
+					id="3eb60000fefc42edb6073fde6c5b980e"
 					mask="false"
 					optional="false"
 					fixedValue="false">
@@ -29,11 +29,11 @@
 		</steps>
 		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 				disabled="false"
-				id="b837d33fb40347f1a98b99c66bd33431"
+				id="9cfd9e5bc1f744f9814c5d7c48b7115e"
 				mask="false"
 				optional="false"
 				fixedValue="false">
-			<from>result9dd712338bfb4ef585c5f524db782778/result</from>
+			<from>resultcb774a9533244be5b1040c8e516b4b98/result</from>
 			<to>attachment</to>
 		</steps>
 	</steps>
