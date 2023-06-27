@@ -80,7 +80,18 @@
 				</div>
 			</n-collapsible>
 			<n-collapsible title="Glue utilities" :only-one-open="true">
-				
+				<div class="is-row is-pattern-basic-alternating is-spacing-gap-medium is-align-start">
+					<n-form class="is-variant-vertical" content-class="is-column is-spacing-medium is-shadow-xsmall has-button-close" v-for="template in getTemplates('glue-utility')">
+						<button class="is-button is-size-small is-variant-close" @click="deleteTemplate(template)"><icon name="times"/></button>
+						<n-form-text v-model="template.title" label="Title" :timeout="600" @input="saveTemplate(template)"/>
+						<n-form-text type="area" v-model="template.script" label="Glue script" :timeout="600" @input="function(script) { generateGlueInterface(template, script); saveTemplate(template) }"/>
+						<div class="is-row is-spacing-gap-small" v-if="getInputVariables(template).length"><span class="is-content is-size-small">Inputs:</span><span class="is-badge" v-for="variable in getInputVariables(template)">{{variable}}</span></div>
+						<div class="is-row is-spacing-gap-small" v-if="getOutputVariables(template).length"><span class="is-content is-size-small">Outputs:</span><span class="is-badge" v-for="variable in getOutputVariables(template)">{{variable}}</span></div>
+					</n-form>
+				</div>
+				<div class="is-row">
+					<button class="is-button is-variant-primary-outline is-size-small" @click="newTemplate('glue-utility')"><icon name="plus"/><span class="is-text">Glue utility</span></button>
+				</div>
 			</n-collapsible>
 		</div>
 		<div class=" is-column is-spacing-gap-medium" v-else>
@@ -167,7 +178,7 @@
 							<td v-if="showAutomation">
 								<n-form-combo v-model="step.scriptType" label="Type"
 									class="is-variant-test-editor-automation-type is-label-horizontal"
-									:items="[{name: 'service', label: 'Service'}, {name: 'selenium-utility', label: 'Selenium Utility'}, {name: 'selenium-script', label: 'Selenium Script'}]"
+									:items="[{name: 'service', label: 'Service'}, {name: 'glue-utility', label: 'Glue Utility'}, {name: 'glue-script', label: 'Glue Script'}, {name: 'selenium-utility', label: 'Selenium Utility'}, {name: 'selenium-script', label: 'Selenium Script'}]"
 									:formatter="function(x) { return x.label }"
 									:extracter="function(x) { return x.name }"
 									@input="debounceSave"
@@ -179,7 +190,7 @@
 										<n-form-combo 
 											v-if="step.scriptType == 'service'"
 											:value="step.script"
-											label="Service to run"
+											label="Service"
 											class="is-variant-test-editor-services is-label-horizontal"
 											:timeout="600"
 											:filter="suggestServices"
@@ -190,13 +201,27 @@
 											@input="function(value, label, rawValue, selectedLabel) { updateService(step, rawValue, selectedLabel) }"
 											/>
 										<n-form-text class="is-fill-normal is-small-area" type="area" v-else-if="step.scriptType == 'selenium-script'" v-model="step.script" @input="function(value) { generateSeleniumInterface(step, value);debounceSave() }" />
+										<n-form-text class="is-fill-normal is-small-area" type="area" v-else-if="step.scriptType == 'glue-script'" v-model="step.script" @input="function(value) { generateGlueInterface(step, value);debounceSave() }" />
 										<n-form-combo 
 											v-if="step.scriptType == 'selenium-utility'"
 											v-model="step.script"
 											label="Selenium Utility"
 											class="is-variant-test-editor-services is-label-horizontal"
 											:timeout="600"
+											:pretty-formatter="serviceFormatter"
 											:filter="suggestSeleniumUtilities"
+											:formatter="function(x) { return x.title ? x.title : 'Untitled' }"
+											:extracter="function(x) { return x.id }"
+											@input="debounceSave"
+											/>
+										<n-form-combo 
+											v-if="step.scriptType == 'glue-utility'"
+											v-model="step.script"
+											label="Utility"
+											class="is-variant-test-editor-services is-label-horizontal"
+											:timeout="600"
+											:filter="suggestUtilities"
+											:pretty-formatter="serviceFormatter"
 											:formatter="function(x) { return x.title ? x.title : 'Untitled' }"
 											:extracter="function(x) { return x.id }"
 											@input="debounceSave"
@@ -212,6 +237,8 @@
 											<h4 class="is-h4">Input</h4>
 											<n-form class="is-variant-floating-labels" v-if="hasInputDefinition(step)">
 												<n-page-mapper :to="getInputDefinition(step)"
+													:allow-recursive-mapping="true"
+													:drop-unused="true"
 													:watch-for-changes="true"
 													:allow-computed="false"
 													:plain="true"

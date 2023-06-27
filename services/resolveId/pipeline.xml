@@ -1,0 +1,18 @@
+<structure name="pipeline">
+    <structure name="input">
+        <field name="service" type="java.lang.String"/>
+        <field name="field" type="java.lang.String"/>
+        <structure definition="java.lang.Object" name="value"/>
+    </structure>
+    <structure name="output">
+        <field name="id" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    </structure>
+    <structure definition="nabu.utils.types.ParameterDescription" minOccurs="0" name="parameter"/>
+    <field minOccurs="0" name="typeId" type="java.lang.String"/>
+    <field name="foreignType" type="java.lang.String"/>
+    <structure definition="nabu.utils.types.ParameterDescription" maxOccurs="unbounded" minOccurs="0" name="stringParameters"/>
+    <structure definition="be.nabu.eai.repository.util.Filter" maxOccurs="unbounded" minOccurs="0" name="filters"/>
+    <structure definition="java.lang.Object" minOccurs="0" name="result"/>
+    <structure definition="nabu.utils.types.ParameterDescription" minOccurs="0" name="primaryKey"/>
+    <field minOccurs="0" name="totalRowCount" type="java.lang.Long"/>
+</structure>

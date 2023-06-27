@@ -1,0 +1,387 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="112ebace27a647b581e01f072683221b"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="fc8c62b98ade4e1eaf554a66432c5787"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="5138ed54b36e4c58a0ebdd38d7bd1b95"
+				serviceId="nabu.utils.reflection.Type.of"
+				resultName="result546eeccbd0844e94ac7f6261943a1cb6"
+				temporaryMapping="true"
+				x="50"
+				y="88"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="d724e903a29f4891a23bf9bfa92231df"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/value</from>
+				<to>typeInstance</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="764643fa8d694c62a412da1fb266b2ec"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result546eeccbd0844e94ac7f6261943a1cb6/typeId</from>
+			<to>typeId</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Sequence"
+			comment="If it is a valid uuid, just map it"
+			disabled="false"
+			id="dd40403824c549e08cf6bd07cf4ee76b"
+			label="typeId == &quot;java.util.UUID&quot; || (typeId == &quot;java.lang.String&quot; &amp;&amp; input/value ~ &quot;[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}&quot;) || input/value == null"
+			lineNumber="3">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+				disabled="false"
+				id="36b46c1e3c324013a2ea596ef0ba99a7"
+				lineNumber="4">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="b0fcfd27f1e3444f9d42be4e7dfc037c"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/value</from>
+				<to>output/id</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Break"
+				disabled="false"
+				id="2d9ad2b2a8ae492b932754fbe07604b8"
+				lineNumber="5">
+			<count>2</count>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="5ac7c59d5a3841e4afc6eefe37c80e58"
+			lineNumber="6">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="61469291a939468182d040b3567a4811"
+				serviceId="nabu.utils.reflection.Type.describe"
+				resultName="resultbffd514e709740deab79345ec5e830be"
+				temporaryMapping="true"
+				x="132"
+				y="133"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="ada01bb0ef814503ab6889b992d1eae1"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>=input/service + ":input"</from>
+				<to>typeId</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="6f2d364cf33c4717a2cc1478dae583a8"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>true</from>
+				<to>recursive</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="1c8a376efe3a46a6848693a3b88f6b87"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>resultbffd514e709740deab79345ec5e830be/parameters[path == /input/field]</from>
+			<to>parameter</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Throw"
+			disabled="false"
+			id="7acda29a31364018965aece2a107158e"
+			label="parameter/foreignKey == null"
+			lineNumber="7"
+			message="Could not determine foreign key" xsi:nil="true"/>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="f90c3591be2c467b89b748413a67458d"
+			lineNumber="8">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="f95086ecf7fb46a49b24e2c2c7fafd74"
+				serviceId="nabu.utils.String.split"
+				resultName="resultc5bce1f89ce646e4a3523f5fc9ec67b3"
+				temporaryMapping="true"
+				x="72"
+				y="23"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="46f10f45c1dd4b219c5e5b16492c7e72"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>parameter/foreignKey</from>
+				<to>string</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="40b6b7473deb4ee590aae225ea1aa8db"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>:</from>
+				<to>separator</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="0a89f5cc3e664e9194b3fdeab6e68647"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>resultc5bce1f89ce646e4a3523f5fc9ec67b3/parts[0]</from>
+			<to>foreignType</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="359116501fe5413d890750007c5eaad3"
+			lineNumber="9">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="23d625e5e7e44405b6e9f5605bf042f7"
+				serviceId="nabu.utils.reflection.Type.describe"
+				resultName="resultaca8ecddebce4b938c3bbe2bd7677e51"
+				temporaryMapping="true"
+				x="77"
+				y="129"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="45f4da672d254d1caa180d495618fb27"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>foreignType</from>
+				<to>typeId</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="9d7402d7ff2e472b9874835b79198187"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>resultaca8ecddebce4b938c3bbe2bd7677e51/parameters[typeName == "string"]</from>
+			<to>stringParameters</to>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="d95beea82bb84cfbbb9831a57ac0a620"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>resultaca8ecddebce4b938c3bbe2bd7677e51/parameters[primary]</from>
+			<to>primaryKey</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Throw"
+			disabled="false"
+			id="3dc5e84f506d49aaa3f92c4ce1671de5"
+			label="!stringParameters"
+			lineNumber="10"
+			message="=&quot;No string parameters found in: &quot; + foreignType" xsi:nil="true"/>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Throw"
+			disabled="false"
+			id="fad160ab1a134448964752f590d79c94"
+			label="!primaryKey"
+			lineNumber="11"
+			message="=&quot;No primary key found in: &quot; + foreignType" xsi:nil="true"/>
+	<steps xsi:type="be.nabu.libs.services.vm.step.For"
+			disabled="false"
+			id="4856e1b5bc6440249479aab02f57a840"
+			lineNumber="12"
+			variable="stringParameter"
+			into="input/filters">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+				disabled="false"
+				id="d60ce4c76d1949e89696d2a76d50cdab"
+				lineNumber="13">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="aa4c4a2f4a974aaab8614ccba3788b94"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>stringParameter/name</from>
+				<to>filters[0]/key</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="a316fece414e4873814f1d9463f536c4"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>="="</from>
+				<to>filters[0]/operator</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="489cbeec6e8a49ecb01dff3d74fe775d"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/value</from>
+				<to>filters[0]/values[0]</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="b591a7c0ae3b4bb18cac90fd476a280c"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>true</from>
+				<to>filters[0]/or</to>
+			</steps>
+		</steps>
+		<query>stringParameters</query>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="3374f9a294244c449216d3906fcb7c9b"
+			lineNumber="14">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="8c24300e03ac4523ad0f1636548fdfb6"
+				serviceId="nabu.services.jdbc.Services.selectFiltered"
+				resultName="result3efb658a79ed4f52b4b3228f9343d124"
+				temporaryMapping="true"
+				x="70"
+				y="89"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="c64f8a1258b1409aa4498f3e03bce34b"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>filters</from>
+				<to>filters</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="46eebb5654ae4717923e32b710d7d0b3"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>1</from>
+				<to>limit</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="d4cd4570e5cd4547a8c8465bb2a6ad8c"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>foreignType</from>
+				<to>typeId</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="531c84eb64cc4cac8c942fc32e7a08a7"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>true</from>
+				<to>totalRowCount</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="dbd8b574eadc406a99a3d2b719d9975c"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result3efb658a79ed4f52b4b3228f9343d124/response/results[0]</from>
+			<to>result</to>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="c7ff62318a13495f9cbd27bbe3d329ea"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result3efb658a79ed4f52b4b3228f9343d124/response/totalRowCount</from>
+			<to>totalRowCount</to>
+		</steps>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Throw"
+			disabled="false"
+			id="24ff0bc70e574fa2bbe252cf386d949c"
+			label="totalRowCount &gt; 1"
+			lineNumber="15"
+			message="=&quot;Found &quot; + totalRowCount + &quot; possible hits for value '&quot; + input/value + &quot;' in field: &quot;+ input/field" xsi:nil="true"/>
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="e33a6631db234ea493a97773db9a1f60"
+			lineNumber="16">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="0288ca5548e447fea035d03041b0bf46"
+				serviceId="nabu.utils.reflection.Type.get"
+				resultName="result8733240647904324883f9f6b6ccc9090"
+				temporaryMapping="true"
+				x="95"
+				y="100"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="d39893ea622c47e4ac76ca9411e60a69"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>result</from>
+				<to>typeInstance</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="327ba5d5acfd4bd29c580b76c7fa1902"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>primaryKey/name</from>
+				<to>path</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="ddbaf0e7d12e4f4f8e55bd02223408c9"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result8733240647904324883f9f6b6ccc9090/value</from>
+			<to>output/id</to>
+		</steps>
+	</steps>
+</sequence>

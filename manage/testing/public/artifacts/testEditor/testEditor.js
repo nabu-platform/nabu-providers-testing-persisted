@@ -45,7 +45,8 @@ Vue.view("test-editor", {
 			videoContent: null,
 			imageContent: null,
 			seleniumContent: null,
-			loaded: false
+			loaded: false,
+			providedUtilities: []
 		}
 	},
 	computed: {
@@ -79,6 +80,9 @@ Vue.view("test-editor", {
 				return visible;
 			});
 		}
+	},
+	created: function() {
+		this.preloadUtilities();
 	},
 	activate: function(done) {
 		this.load().then(done, done);
@@ -315,10 +319,16 @@ Vue.view("test-editor", {
 						childPromises.push(self.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.service.list", {
 								serviceIds: serviceIds
 							}).then(function(result) {
-								console.log("resolved", result);
 								if (result && result.results) {
 									result.results.forEach(function(x) {
 										self.serviceDefinitions[x.id] = x;
+										// update the definition if we call it
+										self.steps.forEach(function(step) {
+											if (step.scriptType == "service" && step.script == x.id) {
+												step.inputDefinition = x.inputDefinition;
+												step.outputDefinition = x.outputDefinition;
+											}
+										})
 									})
 								}
 								promise.resolve();
@@ -672,46 +682,25 @@ Vue.view("test-editor", {
 			this.steps.filter(function(x, index) { return !untilIndex || index <= untilIndex }).filter(function(x) { return x.enabled }).forEach(function(step) {
 				self.postprocess(step);
 				if (step.scriptType == "service" && step.script) {
-					glue += "\n@id " + step.id + "\n"
-					if (step.outputBindings) {
-						glue += step.outputBindings + " = ";
-					}
-					glue += step.script + "(";
-					if (step.inputBindings) {
-						var first = true;
-						var bindings = JSON.parse(step.inputBindings);
-						Object.keys(bindings).forEach(function(key) {
-							var binding = bindings[key] ? bindings[key] : null;
-							if (binding && binding.indexOf("fixed.") == 0) {
-								binding = binding.substring("fixed/".length);
-								// check for native types
-								if (binding != "true" && binding != "false" && binding != "null" && !binding.match(/^[0-9.]+$/)) {
-									binding = "\"" + binding + "\"";
-								}
-							}
-							else if (binding && binding.indexOf("variables.") == 0) {
-								binding = binding.substring("variables/".length).replace(/\./g, "/");
-							}
-							else if (binding) {
-								binding = binding.replace(/\./g, "/");
-							}
-							if (binding) {
-								if (first) {
-									first = false;
-								}
-								else {
-									glue += ", "
-								}
-								glue += key + ": " + binding;
-							}
-						});
-					}
-					glue += ")\n";
+					glue = self.generateServiceCall(glue, step.script, step);
 				}
-				else if (step.scriptType == "glue" && step.script) {
+				else if (step.scriptType == "glue-script" && step.script) {
 					glue += "\n@id " + step.id + "\n"
 						+ "sequence\n"
 					glue += step.script.replace(/^/mg, "\t") + "\n";
+				}
+				else if (step.scriptType == "glue-utility" && step.script) {
+					var utility = self.suggestUtilities().filter(function(x) {
+						return x.id == step.script;
+					})[0];
+					if (utility.generator) {
+						glue = utility.generator(glue, step);
+					}
+					else if (utility.script) {
+						glue += "\n@id " + step.id + "\n"
+							+ "sequence\n"
+						glue += utility.script.replace(/^/mg, "\t") + "\n";
+					}
 				}
 				// an embedded selenium script or a utility, they only differ in how the attachments are created
 				else if ((step.scriptType == "selenium-script" || step.scriptType == "selenium-utility") && step.script) {
@@ -795,7 +784,34 @@ Vue.view("test-editor", {
 			});
 			return attachments;
 		},
-		
+		generateGlueInterface: function(step, script) {
+			var inputDefinition = null;
+			var outputDefinition = null;
+			if (script) {
+				var variables = script.match(/^[\s]*([^\s?=]+)[\s]*\?=/mg);
+				if (variables && variables.length) {
+					var inputDefinition = {};
+					variables.forEach(function(variable) {
+						variable = variable.replace(/^[\s]*([^\s?=]+)[\s]*\?=/, "$1");
+						inputDefinition[variable] = {
+							type: "string"
+						}
+					});
+				}
+				variables = script.match(/^@return[\r\n]+([^\s=]+)[\s]*\=/mg);
+				if (variables && variables.length) {
+					var outputDefinition = {};
+					variables.forEach(function(variable) {
+						variable = variable.replace(/^@return[\r\n]+([^\s=]+)[\s]*\=/, "$1");
+						outputDefinition[variable] = {
+							type: "string"
+						}
+					});
+				}
+			}
+			step.inputDefinition = inputDefinition ? JSON.stringify({properties:inputDefinition}) : null;
+			step.outputDefinition = outputDefinition && Object.keys(outputDefinition).length ? JSON.stringify({properties:outputDefinition}) : null;
+		},
 		generateSeleniumInterface: function(step, script) {
 			var inputDefinition = null;
 			var outputDefinition = null;
@@ -871,7 +887,7 @@ Vue.view("test-editor", {
 		},
 		serviceFormatter: function(service) {
 			var html = "<div class='is-column is-spacing-gap-small'>";
-			html += "<span>" + (service.summary ? service.summary : service.id) + "</span>";
+			html += "<span>" + (service.summary ? service.summary : (service.title ? service.title : service.id)) + "</span>";
 			if (service.description) {
 				html += "<span class='is-content is-variant-subscript'>" + service.description + "</span>"
 			}
@@ -912,6 +928,17 @@ Vue.view("test-editor", {
 		resolveService: function(service) {
 			console.log("resolving", service, this.serviceDefinitions[service]);
 			return this.serviceDefinitions[service];	
+		},
+		suggestUtilities: function(value) {
+			var combined = [];
+			nabu.utils.arrays.merge(combined, this.providedUtilities);
+			nabu.utils.arrays.merge(combined, this.templates.filter(function(x) {
+				return x.scriptType == "glue-utility";
+			}));
+			console.log("combined is", combined);
+			return combined.filter(function(x) {
+				return !value || (x.title && x.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) || (x.description && x.description.toLowerCase().indexOf(value.toLowerCase()) >= 0);
+			});
 		},
 		suggestSeleniumUtilities: function(value) {
 			return this.templates.filter(function(x) {
@@ -994,6 +1021,12 @@ Vue.view("test-editor", {
 			if (template) {
 				step = template;
 			}
+			var provided = this.providedUtilities.filter(function(utility) {
+				return utility.id == step.script;
+			})[0];
+			if (provided) {
+				step = provided;
+			}
 			return step.inputDefinition ? JSON.parse(step.inputDefinition) : {};
 		},
 		getOutputDefinition: function(step) {
@@ -1002,6 +1035,12 @@ Vue.view("test-editor", {
 			})[0];
 			if (template) {
 				step = template;
+			}
+			var provided = this.providedUtilities.filter(function(utility) {
+				return utility.id == step.script;
+			})[0];
+			if (provided) {
+				step = provided;
 			}
 			var result = {};
 			if (step.outputDefinition) {
@@ -1171,6 +1210,157 @@ Vue.view("test-editor", {
 				if (editor.getAttribute("step-id") == step.id) {
 					editor.style.minHeight = lines + "rem";
 				}
+			})
+		},
+		generateServiceCall: function(glue, method, step) {
+			var self = this;
+			
+			var methodCall = "\n@id " + step.id + "\n"
+			if (step.outputBindings) {
+				methodCall += step.outputBindings + " = ";
+			}
+			methodCall += method + "(";
+			var inputDefinition = this.getInputDefinition(step);	
+			if (step.inputBindings) {
+				var first = true;
+				var bindings = JSON.parse(step.inputBindings);
+				
+				// we assembe the parameters
+				var parameters = "";
+				var structs = [];
+				Object.keys(bindings).forEach(function(key) {
+					var binding = bindings[key] ? bindings[key] : null;
+					key = key.replace(/\./g, "/");
+					if (binding && binding.indexOf("fixed.") == 0) {
+						binding = binding.substring("fixed/".length);
+						// check for native types
+						if (binding != "true" && binding != "false" && binding != "null" && !binding.match(/^[0-9.]+$/)) {
+							binding = "\"" + binding + "\"";
+						}
+					}
+					else if (binding && binding.indexOf("variables.") == 0) {
+						binding = binding.substring("variables/".length).replace(/\./g, "/");
+					}
+					else if (binding) {
+						binding = binding.replace(/\./g, "/");
+					}
+					if (binding) {
+						// if we are mapping to a uuid field, we might not have a valid uuid but instead a string representation
+						// a good example is masterdata, we want to set "nv" for "legalForm" rather than the id, especially for the matrix tests
+						// so we pick up on id-level bindings and run them through a resolver
+						var target = inputDefinition;
+						var parts = key.split("/");
+						parts.forEach(function(x, index) {
+							if (target && target.properties) {
+								target = target.properties[x];
+							}
+						});
+						// if we are mapping a uuid, wrap it in a resolver
+						if (target && target.format == "uuid") {
+							binding = "nabu.providers.testing.persisted.services.resolveId(\"" + method + "\",\"" + key + "\", " + binding + ")/id";
+						}
+						
+						// if we actually have a nested key, so we are binding a field to nested thing, we need to wrap it in structure definitions
+						// we can't actually call myService(account/firstName: "John")
+						// we need
+						// $servicemyServiceaccount = structure()
+						// $servicemyServiceaccount/firstName = "John"
+						// myService(account: $servicemyServiceaccount)
+						if (key.indexOf("/") > 0) {
+							// get the core variable name, e.g. "account"
+							var core = key.substring(0, key.indexOf("/"));
+							var fullName = "$service" + method.replace(/\./g, "_") + core;
+							// if we haven't defined it yet, define it
+							if (structs.indexOf(core) < 0) {
+								glue += "\n" + fullName + " = structure()";
+								structs.push(core);
+								if (first) {
+									first = false;
+								}
+								else {
+									methodCall += ", "
+								}
+								methodCall += core + ": " + fullName;
+							}
+							glue += "\n" + fullName + key.substring(core.length) + " = " + binding;
+						}
+						else {						
+							if (first) {
+								first = false;
+							}
+							else {
+								methodCall += ", "
+							}
+							methodCall += key + ": " + binding;
+						}
+					}
+				});
+			}
+			methodCall += ")\n";
+			
+			glue += methodCall;
+			return glue;
+		},
+		// TODO: in the future this can be pluggable?
+		preloadUtilities: function() {
+			var self = this;
+			this.providedUtilities.push({
+				id: "standard:validate-equals",
+				title: "Validate equals",
+				description: "Check the actual value matches the expected value",
+				generator: function(glue, step) {
+					return self.generateServiceCall(glue, "test.validateEquals", step);
+				},
+				tags: ["Validation"],
+				inputDefinition: JSON.stringify({
+					properties: {
+						expected: {
+							type: "string"
+						},
+						actual: {
+							type: "string"
+						},
+						message: {
+							type: "string"
+						}
+					}
+				}),
+				outputDefinition: JSON.stringify({
+					properties: {
+						valid: {
+							type: "boolean"
+						}
+					}
+				})
+			});
+			this.providedUtilities.push({
+				id: "standard:validate-not-equals",
+				title: "Validate not equals",
+				description: "Check that the actual value does not match an expected value ",
+				generator: function(glue, step) {
+					return self.generateServiceCall(glue, "test.validateNotEquals", step);
+				},
+				tags: ["Validation"],
+				inputDefinition: JSON.stringify({
+					properties: {
+						expected: {
+							type: "string"
+						},
+						actual: {
+							type: "string"
+						},
+						message: {
+							type: "string"
+						}
+					}
+				}),
+				outputDefinition: JSON.stringify({
+					properties: {
+						valid: {
+							type: "boolean"
+						}
+					}
+				})
 			})
 		}
 	},
