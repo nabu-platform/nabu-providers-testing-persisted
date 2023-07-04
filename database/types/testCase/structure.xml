@@ -9,4 +9,5 @@
     <field minOccurs="0" name="script" type="java.lang.String"/>
     <field comment="Stores the variables (in JSON)" minOccurs="0" name="variables" type="java.lang.String"/>
     <field comment="Stores the matrix (in JSON)" minOccurs="0" name="matrix" type="java.lang.String"/>
+    <field minOccurs="0" name="serviceContext" type="java.lang.String"/>
 </structure>

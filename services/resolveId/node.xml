@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.services.vm.VMServiceManager" created="2023-06-27T17:54:47.122+02:00" lastModified="2023-06-27T18:14:57.044+02:00" leaf="true" version="17">
+<node artifactManager="be.nabu.eai.module.services.vm.VMServiceManager" created="2023-06-27T17:54:47.122+02:00" lastModified="2023-06-29T09:24:13.788+02:00" leaf="true" version="31">
     <environmentId>apollo</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
     <properties/>
-    <references>nabu.services.jdbc.Services.selectFiltered</references>
-    <references>java.lang.Long</references>
+    <references>nabu.utils.List.add</references>
     <references>nabu.utils.reflection.Type.of</references>
     <references>nabu.utils.types.ParameterDescription</references>
     <references>be.nabu.eai.repository.util.Filter</references>
+    <references>java.util.UUID</references>
+    <references>java.lang.Integer</references>
+    <references>nabu.utils.reflection.Type.describe</references>
+    <references>nabu.services.jdbc.Services.selectFiltered</references>
+    <references>nabu.utils.List.size</references>
+    <references>java.lang.Long</references>
     <references>java.lang.Object</references>
     <references>java.lang.String</references>
-    <references>java.util.UUID</references>
     <references>nabu.utils.String.split</references>
-    <references>nabu.utils.reflection.Type.describe</references>
     <references>nabu.utils.reflection.Type.get</references>
 </node>

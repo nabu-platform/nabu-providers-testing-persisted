@@ -23,6 +23,7 @@
 		<n-form content-class="is-column is-spacing-medium" class="is-variant-vertical" v-else-if="configurationTab == 'settings'">
 			<n-form-text v-model="testCase.title" label="Title"/>
 			<n-form-text v-model="testCase.utilityFolderId" label="Utility Folder Id"/>
+			<n-form-text v-model="testCase.serviceContext" label="Service Context"/>
 			<n-form-text v-model="testCase.description" type="area" label="Description"/>
 		</n-form>
 		<n-form class="is-variant-horizontal is-matrix" content-class="is-column is-spacing-small" v-else-if="configurationTab == 'matrix'">
@@ -135,30 +136,37 @@
 						<tr v-for="(step, index) in steps" v-show="isVisibleStep(step)" :key="step.id" class="step" :class="{'is-disabled': !step.enabled}">
 							<td class="is-border-none"><div class="is-column"><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, -1)"><icon name="chevron-up"/></button><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, 1)"><icon name="chevron-down"/></button></div></td>
 							<td><div class="is-row is-spacing-small is-align-center"><button class="is-button is-variant-ghost is-size-xsmall" @click="addAfter(index)"><icon name="plus"/></button><span class="is-text is-line-number">{{formatLineNumber(index)}}</span><n-form-switch class="is-size-small" v-model="step.enabled" @input="debounceSave"/><button class="is-button is-variant-ghost is-size-xsmall" @click="remove(step)"><icon class="is-color-danger-outline" name="times"/></button></div></td>
-							<td :class="{'is-disabled': !step.enabled}" class="is-description-container"><div class="is-row is-spacing-gap-small is-details-container">
-									<button class="is-button is-variant-ghost is-size-xsmall" v-if="step.type == 'title' && step.expanded" @click="step.expanded = !step.expanded" :disabled="manual"><icon name='minus-square'/></button>
-									<button class="is-button is-variant-ghost is-size-xsmall" v-if="step.type == 'title' && !step.expanded" @click="step.expanded = !step.expanded" :disabled="manual"><icon name='plus-square'/></button>
-									<div :class="['is-depth' + step.depth, 'is-type-' + step.type]" class="is-content-wrapper is-description-wrapper"><div :key="step.id" ref="editors" 
-										:step-id="step.id"
-										@keydown.enter.ctrl="addAfter(index)" 
-										@keydown.tab="tab(step, $event)" 
-										@keydown.up.ctrl="move(step, -1)"
-										@keydown.down.ctrl="move(step, 1)"
-										@keydown.up.alt="shift(step, -1)"
-										@keydown.down.alt="shift(step, 1)"
-										class="is-inline-editor" 
-										placeholder="Add title" 
-										v-html-once="step.title ? step.title : ''" 
-										@paste="paste(step, $event)" 
-										:contenteditable="true" 
-										@keyup="update(step, $event)" 
-										@blur="update(step, $event)" 
-										@input="update(step, $event)"></div></div>
-									<button class="is-button is-edit-details is-variant-ghost is-size-xsmall" @click="editStepDefinition(step)"><icon name="search"/></button>
-								</div><n-absolute top="100%" left="0" v-if="editingStepDefinition == step" :autoclose="true" @close="function() { editingStepDefinition = null; uploadStepAttachments(step); }">
+							<td :class="{'is-disabled': !step.enabled}" class="is-description-container">
+								<div class="is-column is-spacing-gap-small">
+									<div class="is-row is-spacing-gap-small is-details-container">
+										<button class="is-button is-variant-ghost is-size-xsmall" v-if="step.type == 'title' && step.expanded" @click="step.expanded = !step.expanded" :disabled="manual"><icon name='minus-square'/></button>
+										<button class="is-button is-variant-ghost is-size-xsmall" v-if="step.type == 'title' && !step.expanded" @click="step.expanded = !step.expanded" :disabled="manual"><icon name='plus-square'/></button>
+											<div :class="['is-depth' + step.depth, 'is-type-' + step.type]" class="is-content-wrapper is-description-wrapper"><div :key="step.id" ref="editors" 
+												:step-id="step.id"
+												@keydown.enter.ctrl="addAfter(index)" 
+												@keydown.tab="tab(step, $event)" 
+												@keydown.up.ctrl="move(step, -1)"
+												@keydown.down.ctrl="move(step, 1)"
+												@keydown.up.alt="shift(step, -1)"
+												@keydown.down.alt="shift(step, 1)"
+												class="is-inline-editor" 
+												placeholder="Add title" 
+												v-html-once="step.title ? step.title : ''" 
+												@paste="paste(step, $event)" 
+												:contenteditable="true" 
+												@keyup="update(step, $event)" 
+												@blur="update(step, $event)" 
+												@input="update(step, $event)"></div>
+											</div>
+										<button class="is-button is-edit-details is-variant-ghost is-size-xsmall" @click="editStepDefinition(step)"><icon name="search"/></button>
+										</div>
+										<p v-if="step.summary" class="is-p is-variant-subscript" :class="'is-depth' + step.depth" v-html="$services.formatter.format(step.summary, {format: 'markdown'})"/>
+									</div>
+								<n-absolute top="100%" left="0" v-if="editingStepDefinition == step" :autoclose="true" @close="function() { editingStepDefinition = null; uploadStepAttachments(step); }">
 								<n-form class="is-variant-vertical is-popup-form">
-									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes using markdown syntax" @input="debounceSave"/>
-									<n-input-file :types="['image/*']" ref='form'
+									<n-form-text v-model="step.summary" type="area" label="Summary" placeholder="Add some more information about this step in markdown syntax" @input="debounceSave"/>
+									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes for people running this step manually using markdown syntax" @input="debounceSave"/>
+									<n-input-file ref='form'
 										:value='editingAttachments'
 										browse-label="Browse or drag files"
 										browse-icon="plus"
@@ -271,7 +279,7 @@
 									<span class="is-badge" v-if="step.enabled && getResult(result, step).stopped">{{new Date(getResult(result, step).stopped).getTime() - new Date(getResult(result, step).started).getTime()}} ms</span>
 									<n-info v-if="getResult(result, step).comment"><span v-html="getResult(result, step).comment"/></n-info>
 									<n-info class="error" icon="question" v-if="getError(result, step)"><span v-html="getError(result, step)"/></n-info>
-									<button v-for="attachment in getAttachmentsFor(result, step)" class="is-button is-variant-ghost is-size-xsmall" @click="showAttachment(attachment)"><icon name="image"/></button>
+									<button v-for="attachment in getAttachmentsFor(result, step)" class="is-button is-variant-ghost is-size-xsmall" @click="showAttachment(attachment)"><icon :name="attachment.type && attachment.type.indexOf('image/') == 0 ? 'image' : 'file'"/></button>
 								</div>
 								<div v-else-if="result.runType != 'manual' || result != manual" class="is-row is-result is-color-warning-outline">
 									<icon name="question" class="is-spacing-xsmall is-size-xsmall"/>
@@ -284,7 +292,7 @@
 										<li class="is-column"><button class="is-button is-size-small is-variant-neutral-outline" @click="editingStep = step"><icon name="pencil-alt"/><span class="is-text">Edit</span></button></li>
 									</ul>
 									<p v-if="step.description" v-html="$services.formatter.format(step.description, {format: 'markdown'})"/>
-									<div class="is-row"><button class="is-button is-size-small is-variant-ghost" v-for="attachment in getAttachmentsForStep(step)" @click="showAttachment(attachment)"><icon name="image"/></button></div>
+									<div class="is-row"><button class="is-button is-size-small is-variant-ghost" v-for="attachment in getAttachmentsForStep(step)" @click="showAttachment(attachment)"><icon :name="attachment.type && attachment.type.indexOf('image/') == 0 ? 'image' : 'file'"/></button></div>
 								</div>
 								<div v-else-if="result == manual && result.runType == 'manual' && !isCurrentManualStep(result,step) && !result.stopped && result.steps.length == 0">
 									<button class="is-button is-size-small" @click="runUntil(step)"><icon name="play" class="is-size-xxsmall"/><span class="is-text">Automatically run until here</span></button>
@@ -293,7 +301,7 @@
 									<n-form class="is-variant-vertical is-popup-form">
 										<n-form-text type="area" label="Comment" v-model="editingStepContent.comment" v-focus />
 										<n-form-text v-model="editingStepContent.issueId" label="Bug tracker issue id" />
-										<n-input-file :types="['image/*']" ref='form'
+										<n-input-file ref='form'
 											:value='editingAttachments'
 											browse-label="Browse or drag files"
 											browse-icon="plus"

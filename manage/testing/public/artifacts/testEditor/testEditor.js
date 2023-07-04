@@ -1,6 +1,9 @@
 Vue.view("test-editor", {
 	props: {
-		serviceFolder: {
+		serviceContext: {
+			type: String	
+		},
+		utilityFolderId: {
 			type: String
 		},
 		testCaseId: {
@@ -110,7 +113,7 @@ Vue.view("test-editor", {
 			this.$confirm({
 				message: "Are you sure you want to delete this template?"
 			}).then(function() {
-				self.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.create", {
+				self.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.delete", {
 					id: template.id
 				}).then(function() {
 					self.templates.splice(self.templates.indexOf(template), 1);
@@ -224,7 +227,7 @@ Vue.view("test-editor", {
 					var base64data = reader.result;                
 					Vue.set(self, "imageContent", {
 						name: attachment.name,
-						contentType: attachment.contentType,
+						contentType: attachment.type,
 						url: 'data:application/octet-stream;base64,' + base64data.replace(/.*?;base64,/, "")
 					});
 				}
@@ -232,20 +235,31 @@ Vue.view("test-editor", {
 			// if it is a step attachment, we need to use that service
 			else if (attachment.testCaseStepId) {
 				this.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: attachment.id}, true).then(function(url) {
-					Vue.set(self, "imageContent", {
-						name: attachment.name,
-						contentType: attachment.contentType,
-						url: url
-					});	
-				})
+					console.log("content type is", attachment);
+					if (attachment.type && attachment.type.indexOf("image/") == 0) {
+						Vue.set(self, "imageContent", {
+							name: attachment.name,
+							contentType: attachment.type,
+							url: url
+						});	
+					}
+					else {
+						window.location = url;
+					}
+				});
 			}
 			else {
 				this.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.instance.attachment.stream", {attachmentId: attachment.id}, true).then(function(url) {
-					Vue.set(self, "imageContent", {
-						name: attachment.name,
-						contentType: attachment.contentType,
-						url: url
-					});	
+					if (attachment.type && attachment.type.indexOf("image/") == 0) {
+						Vue.set(self, "imageContent", {
+							name: attachment.name,
+							contentType: attachment.type,
+							url: url
+						});
+					}
+					else {
+						window.url = url;
+					}
 				})
 				/*
 				Vue.set(self, "imageContent", {
@@ -382,6 +396,8 @@ Vue.view("test-editor", {
 				self.postprocess(step);
 			});
 			var promises = [];
+			// make sure we push the latest script
+			this.testCase.script = this.buildGlue();
 			promises.push(this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCase.services.update", {
 				id: this.testCaseId,
 				body: this.testCase
@@ -577,7 +593,7 @@ Vue.view("test-editor", {
 			var self = this;
 			var promise = this.$services.q.defer();
 			this.running = true;
-			this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.testRun", { body: { script : this.buildGlue(untilIndex), matrix: matrix ? this.buildMatrix() : null, attachments: this.buildAttachments() }}).then(function(x) {
+			this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.testCase.testRun", { body: { script : this.buildGlue(untilIndex), matrix: matrix ? this.buildMatrix() : null, attachments: this.buildAttachments(), resources: this.buildResources() }}).then(function(x) {
 				if (x && x.results && x.results.length) {
 					x.results.forEach(function(result) {
 						if (result.log) {
@@ -608,8 +624,12 @@ Vue.view("test-editor", {
 										})[0];
 										validation.testCaseInstanceStepId = step ? step.id : null;
 									}
+									validation.created = validation.timestamp;
 									validation.testCaseInstanceId = lastResult.id;
 									validation.id = crypto.randomUUID().replace(/-/g, "");
+									if (!validation.message) {
+										validation.message = "No message";
+									}
 								})
 							}
 							lastResult.attachments = result.attachments;
@@ -666,6 +686,12 @@ Vue.view("test-editor", {
 		// build the glue service to run
 		buildGlue: function(untilIndex) {
 			var glue = "\n";
+			
+			var utilityCounter = 1;
+			if (this.testCase.serviceContext || this.serviceContext) {
+				glue += "nabu.utils.Runtime.setServiceContext(\"" + (this.testCase.serviceContext ? this.testCase.serviceContext : this.serviceContext) + "\")\n\n"
+			}
+			
 			glue += "# Declare variables\n"
 				+ "sequence\n"
 			
@@ -697,9 +723,10 @@ Vue.view("test-editor", {
 						glue = utility.generator(glue, step);
 					}
 					else if (utility.script) {
-						glue += "\n@id " + step.id + "\n"
-							+ "sequence\n"
+						glue += "\nutility" + utilityCounter + " = lambda\n"
 						glue += utility.script.replace(/^/mg, "\t") + "\n";
+						glue = self.generateServiceCall(glue, "utility" + utilityCounter, step);
+						utilityCounter++;
 					}
 				}
 				// an embedded selenium script or a utility, they only differ in how the attachments are created
@@ -742,6 +769,11 @@ Vue.view("test-editor", {
 				step = template;
 			}
 			return step.script;
+		},
+		buildResources: function() {
+			return this.attachments.map(function(x) {
+				return x.uri;
+			});
 		},
 		buildAttachments: function() {
 			var attachments = [];
@@ -950,7 +982,7 @@ Vue.view("test-editor", {
 		suggestServices: function(value, label) {
 			var self = this;
 			return this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.service.list", {
-				folderId: this.showAllServices ? null : (this.testCase && this.testCase.utilityFolderId ? this.testCase.utilityFolderId : this.serviceFolder),
+				folderId: this.showAllServices ? null : (this.testCase && this.testCase.utilityFolderId ? this.testCase.utilityFolderId : this.utilityFolderId),
 				q: value, 
 				limit: 20, 
 				offset: 0, 
@@ -986,12 +1018,33 @@ Vue.view("test-editor", {
 			var pipeline = {
 				variables: {properties: variables}
 			}
-			this.steps.slice(0, index).forEach(function(step) {
+			var self = this;
+			var resources = {};
+			var stepsToCheck = this.steps.slice(0, index);
+			// we take output from previous steps
+			stepsToCheck.forEach(function(step) {
 				// if we have an output definition, we will be injecting new data
 				if (step.outputDefinition && step.outputBindings) {
 					pipeline[step.outputBindings] = JSON.parse(step.outputDefinition);
 				}
 			});
+			// we take resources from previous steps AND this step
+			stepsToCheck.push(step);
+			stepsToCheck.forEach(function(step) {
+				var stepResources = self.attachments.filter(function(x) {
+					return x.testCaseStepId == step.id
+				});
+				if (stepResources.length) {
+					stepResources.forEach(function(resource) {
+						resources[resource.name] = {
+							type: "string"
+						}
+					})
+				}
+			});		
+			if (Object.keys(resources).length) {
+				pipeline.resources = {properties:resources};
+			}
 			return pipeline;
 		},
 		getInputBindings: function(step) {
@@ -1231,6 +1284,13 @@ Vue.view("test-editor", {
 				Object.keys(bindings).forEach(function(key) {
 					var binding = bindings[key] ? bindings[key] : null;
 					key = key.replace(/\./g, "/");
+					var target = inputDefinition;
+					var parts = key.split("/");
+					parts.forEach(function(x, index) {
+						if (target && target.properties) {
+							target = target.properties[x];
+						}
+					});
 					if (binding && binding.indexOf("fixed.") == 0) {
 						binding = binding.substring("fixed/".length);
 						// check for native types
@@ -1241,6 +1301,22 @@ Vue.view("test-editor", {
 					else if (binding && binding.indexOf("variables.") == 0) {
 						binding = binding.substring("variables/".length).replace(/\./g, "/");
 					}
+					else if (binding && binding.indexOf("resources.") == 0) {
+						if (target.format == "uri") {
+							var attachment = self.attachments.filter(function(x) {
+								return x.name == binding.substring("resources.".length);
+							})[0];
+							if (attachment && attachment.uri) {
+								binding = "'" + attachment.uri + "'";
+							}
+							else {
+								binding = null;
+							}
+						}
+						else {
+							binding = "resource('" + binding.substring("resources.".length) + "')";
+						}
+					}
 					else if (binding) {
 						binding = binding.replace(/\./g, "/");
 					}
@@ -1248,15 +1324,8 @@ Vue.view("test-editor", {
 						// if we are mapping to a uuid field, we might not have a valid uuid but instead a string representation
 						// a good example is masterdata, we want to set "nv" for "legalForm" rather than the id, especially for the matrix tests
 						// so we pick up on id-level bindings and run them through a resolver
-						var target = inputDefinition;
-						var parts = key.split("/");
-						parts.forEach(function(x, index) {
-							if (target && target.properties) {
-								target = target.properties[x];
-							}
-						});
 						// if we are mapping a uuid, wrap it in a resolver
-						if (target && target.format == "uuid") {
+						if (target && target.format == "uuid" || (target.type == "array" && target.items && target.items.format == "uuid")) {
 							binding = "nabu.providers.testing.persisted.services.resolveId(\"" + method + "\",\"" + key + "\", " + binding + ")/id";
 						}
 						

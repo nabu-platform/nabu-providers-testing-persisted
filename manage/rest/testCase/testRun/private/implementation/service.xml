@@ -53,6 +53,15 @@
 				<from>input/content/attachments</from>
 				<to>attachments</to>
 			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="b166c2217dd24c3f9691e9dacf2d086e"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content/resources</from>
+				<to>resources</to>
+			</steps>
 		</steps>
 		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 				disabled="false"

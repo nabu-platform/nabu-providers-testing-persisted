@@ -55,6 +55,11 @@
 			}
 		}
 	}
+	.is-p.is-variant-subscript {
+		.is-p.is-variant-article {
+			@include content_size_small;
+		}
+	}
 	.is-depth0 {
 		
 	}
