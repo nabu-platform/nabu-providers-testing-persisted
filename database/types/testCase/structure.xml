@@ -1,7 +1,9 @@
 <structure collectionName="testCases" name="testCase">
     <field name="id" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" primaryKey="true" type="java.util.UUID"/>
+    <field name="created" timezone="UTC" type="java.util.Date"/>
+    <field name="modified" timezone="UTC" type="java.util.Date"/>
     <field foreignKey="nabu.providers.testing.persisted.database.types.testProject:id" name="testProjectId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
-    <field comment="The namespace + name of the testcase" name="testId" type="java.lang.String"/>
+    <field comment="The namespace + name of the testcase" minOccurs="0" name="testId" type="java.lang.String"/>
     <field minOccurs="0" name="title" type="java.lang.String"/>
     <field minOccurs="0" name="description" type="java.lang.String"/>
     <field name="enabled" type="java.lang.Boolean"/>
@@ -10,4 +12,6 @@
     <field comment="Stores the variables (in JSON)" minOccurs="0" name="variables" type="java.lang.String"/>
     <field comment="Stores the matrix (in JSON)" minOccurs="0" name="matrix" type="java.lang.String"/>
     <field minOccurs="0" name="serviceContext" type="java.lang.String"/>
+    <field generated="true" name="testIndex" type="java.lang.Long"/>
+    <field comment="Comma separated list of features you want to enable for this test." minOccurs="0" name="features" type="java.lang.String"/>
 </structure>

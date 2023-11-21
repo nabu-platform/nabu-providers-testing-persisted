@@ -24,6 +24,7 @@
 			<n-form-text v-model="testCase.title" label="Title"/>
 			<n-form-text v-model="testCase.utilityFolderId" label="Utility Folder Id"/>
 			<n-form-text v-model="testCase.serviceContext" label="Service Context"/>
+			<n-form-text v-model="testCase.features" label="Features" after="Comma separated list of features you want to enable for this run"/>
 			<n-form-text v-model="testCase.description" type="area" label="Description"/>
 		</n-form>
 		<n-form class="is-variant-horizontal is-matrix" content-class="is-column is-spacing-small" v-else-if="configurationTab == 'matrix'">
@@ -118,7 +119,7 @@
 						<tr>
 							<th class="is-border-none"></th>
 							<th title="line number"></th>
-							<th class="is-description-container"><div class="is-row is-spacing-gap-small"><span class="is-text">Description</span><span class="is-badge is-position-right" v-if="resultPaging.totalRowCount">{{resultPaging.totalRowCount}} runs</span></div></th>
+							<th class="is-description-container"><div class="is-row is-spacing-gap-small"><span class="is-text">{{testCase && testCase.title ? testCase.title : "Description"}}</span><span class="is-badge is-position-right" v-if="resultPaging.totalRowCount">{{resultPaging.totalRowCount}} runs</span></div></th>
 							<th v-if="showAutomation"><div class="is-row is-spacing-gap-medium is-align-cross-center"><span class="is-text">Type</span></div></th>
 							<th v-if="showAutomation"><div class="is-row is-spacing-gap-medium is-align-cross-center"><span class="is-text">Automation</span><n-form-switch class="is-position-right" label="Suggest all" v-model="showAllServices"/></div></th>
 							<th v-for="result in results" :class="{'is-result-changed': !result.saved && manual != result}"><div class="is-column is-spacing-gap-xsmall">
@@ -164,8 +165,8 @@
 									</div>
 								<n-absolute top="100%" left="0" v-if="editingStepDefinition == step" :autoclose="true" @close="function() { editingStepDefinition = null; uploadStepAttachments(step); }">
 								<n-form class="is-variant-vertical is-popup-form">
-									<n-form-text v-model="step.summary" type="area" label="Summary" placeholder="Add some more information about this step in markdown syntax" @input="debounceSave"/>
-									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes for people running this step manually using markdown syntax" @input="debounceSave"/>
+									<n-form-text v-model="step.summary" type="area" label="Summary" placeholder="Add some more information about this step in markdown syntax" :timeout="600" @input="debounceSave"/>
+									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes for people running this step manually using markdown syntax" :timeout="600" @input="debounceSave"/>
 									<n-input-file ref='form'
 										:value='editingAttachments'
 										browse-label="Browse or drag files"

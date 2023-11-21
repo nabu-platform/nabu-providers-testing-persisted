@@ -12,7 +12,7 @@ Vue.view("test-editor", {
 	},
 	data: function() {
 		return {
-			autosave: true,
+			autosave: false,
 			lastSaved: null,
 			lastSaveFailed: null,
 			showAutomation: false,
@@ -690,6 +690,14 @@ Vue.view("test-editor", {
 			var utilityCounter = 1;
 			if (this.testCase.serviceContext || this.serviceContext) {
 				glue += "nabu.utils.Runtime.setServiceContext(\"" + (this.testCase.serviceContext ? this.testCase.serviceContext : this.serviceContext) + "\")\n\n"
+			}
+			if (this.testCase.features) {
+				this.testCase.features.split(/[\s]*,[\s]*/).forEach(function(feature) {
+					if (feature) {
+						glue += "nabu.utils.Runtime.toggleFeature(\"" + feature + "\", true)\n"
+					}
+				});
+				glue += "\n";
 			}
 			
 			glue += "# Declare variables\n"

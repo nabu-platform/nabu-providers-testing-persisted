@@ -4,6 +4,8 @@
     <broadcastCreate>false</broadcastCreate>
     <broadcastUpdate>false</broadcastUpdate>
     <coreType>nabu.providers.testing.persisted.database.types.testCase</coreType>
+    <createBlacklistFields>created</createBlacklistFields>
+    <createBlacklistFields>modified</createBlacklistFields>
     <createPermission>test.manage</createPermission>
     <createRole>$user</createRole>
     <deletePermission>test.manage</deletePermission>
@@ -65,7 +67,10 @@
     <listRole>$user</listRole>
     <provider>nabu.services.crud.provider.basic.provider</provider>
     <restLimitToUser>true</restLimitToUser>
+    <updateBlacklistFields>created</updateBlacklistFields>
+    <updateBlacklistFields>modified</updateBlacklistFields>
     <updatePermission>test.manage</updatePermission>
+    <updateRegenerateFields>modified</updateRegenerateFields>
     <updateRole>$user</updateRole>
     <useExplicitLanguage>false</useExplicitLanguage>
     <useGlobalPermissionContext>true</useGlobalPermissionContext>

@@ -4,7 +4,7 @@
     <field comment="Logical grouping of validations" minOccurs="0" name="validationGroup" type="java.lang.String"/>
     <field name="severity" type="java.lang.String"/>
     <field name="created" timezone="UTC" type="java.util.Date"/>
-    <field comment="The actual technical validation that was run" name="validation" type="java.lang.String"/>
+    <field comment="The actual technical validation that was run" minOccurs="0" name="validation" type="java.lang.String"/>
     <field comment="A human readable message that specifies what we are validating" name="message" type="java.lang.String"/>
     <field comment="The line (if any) that was run. Mostly relevant for glue-based tests" minOccurs="0" name="line" type="java.lang.String"/>
     <field comment="The callstack of where the validation occurred" minOccurs="0" name="callstack" type="java.lang.String"/>
