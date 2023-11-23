@@ -34,7 +34,7 @@
 	}
 	.is-popup-form {
 		background-color: $color-background;
-		padding: $spacing-scale-medium;
+		padding: $spacing-medium;
 		border: solid 1px $color-neutral-light;
 		min-width: 20rem;
 	}
@@ -108,13 +108,13 @@
 		}
 	}
 	.is-input-container {
-		padding: $spacing-scale-medium $spacing-scale-large;
+		padding: $spacing-medium $spacing-large;
 		padding-left: 0;
 	}
 	.is-output-container {
 		border-left: solid 1px $color-neutral-light;
 		background-color: #f9f9f9;
-		padding: $spacing-scale-medium $spacing-scale-large;
+		padding: $spacing-medium $spacing-large;
 	}
 	.is-description-container:not(.is-disabled) {
 		border-left: solid 5px $color-primary-base;
@@ -195,7 +195,7 @@
 	//flex-wrap: wrap;
 	.is-label-wrapper {
 		display: flex;
-		padding: 0 $spacing-scale-medium;
+		padding: 0 $spacing-medium;
 		align-items: center;
 		border: solid 1px $color-neutral-light;
 		border-right: none;
@@ -220,11 +220,11 @@
 	}
 	.is-content-after {
 		width: 100%;
-		padding: $spacing-scale-small 0;
+		padding: $spacing-small 0;
 	}
 	.is-messages {
 		width: 100%;
-		padding: $spacing-scale-small 0;
+		padding: $spacing-small 0;
 	}
 }
 
