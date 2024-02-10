@@ -235,7 +235,6 @@ Vue.view("test-editor", {
 			// if it is a step attachment, we need to use that service
 			else if (attachment.testCaseStepId) {
 				this.$services.user.downloadUrl("nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream", {attachmentId: attachment.id}, true).then(function(url) {
-					console.log("content type is", attachment);
 					if (attachment.type && attachment.type.indexOf("image/") == 0) {
 						Vue.set(self, "imageContent", {
 							name: attachment.name,
@@ -258,7 +257,7 @@ Vue.view("test-editor", {
 						});
 					}
 					else {
-						window.url = url;
+						window.location = url;
 					}
 				})
 				/*

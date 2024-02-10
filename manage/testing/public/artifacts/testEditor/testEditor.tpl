@@ -1,6 +1,6 @@
 <template id="test-editor">
 	<div class="is-column is-spacing-gap-medium is-test-editor">
-		<div class="is-row">
+		<div class="is-menu is-variant-tabs">
 			<button @click="configurationTab = 'editor'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'editor'}">Editor</button>
 			<button @click="configurationTab = 'matrix'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'matrix'}">Variables</button>
 			<button @click="configurationTab = 'utilities'" class="is-button is-variant-tab" :class="{'is-active': configurationTab == 'utilities'}">Utilities</button>
@@ -27,7 +27,7 @@
 			<n-form-text v-model="testCase.features" label="Features" after="Comma separated list of features you want to enable for this run"/>
 			<n-form-text v-model="testCase.description" type="area" label="Description"/>
 		</n-form>
-		<n-form class="is-variant-horizontal is-matrix" content-class="is-column is-spacing-small" v-else-if="configurationTab == 'matrix'">
+		<n-form class="is-matrix" content-class="is-column is-spacing-small" v-else-if="configurationTab == 'matrix'">
 			<div class="is-row is-spacing-gap-small" v-if="false">
 				<div class="is-tag" v-for="(variable, index) in variables">
 					<span class="is-text">
@@ -277,7 +277,7 @@
 							<td v-for="result in results" :class="{'is-result-changed': !result.saved && manual != result}">
 								<div v-if="getResult(result, step)" class="is-row is-spacing-gap-small is-result is-align-center" :class="{'is-color-success-outline': getResult(result, step).severity == 'INFO', 'is-color-warning-outline': getResult(result, step).severity == 'WARNING', 'is-color-danger-outline': getResult(result, step).severity == 'ERROR' }">
 									<icon class="is-spacing-xsmall is-size-xsmall" :name="getResult(result, step).severity == 'INFO' ? 'check' : (getResult(result, step).severity == 'WARNING' ? 'question' : 'times')" />
-									<span class="is-badge" v-if="step.enabled && getResult(result, step).stopped">{{new Date(getResult(result, step).stopped).getTime() - new Date(getResult(result, step).started).getTime()}} ms</span>
+									<span class="is-badge" :class="{'is-variant-success-outline': getResult(result, step).severity == 'INFO', 'is-variant-warning-outline': getResult(result, step).severity == 'WARNING', 'is-variant-danger-outline': getResult(result, step).severity == 'ERROR' }" v-if="step.enabled && getResult(result, step).stopped">{{new Date(getResult(result, step).stopped).getTime() - new Date(getResult(result, step).started).getTime()}} ms</span>
 									<n-info v-if="getResult(result, step).comment"><span v-html="getResult(result, step).comment"/></n-info>
 									<n-info class="error" icon="question" v-if="getError(result, step)"><span v-html="getError(result, step)"/></n-info>
 									<button v-for="attachment in getAttachmentsFor(result, step)" class="is-button is-variant-ghost is-size-xsmall" @click="showAttachment(attachment)"><icon :name="attachment.type && attachment.type.indexOf('image/') == 0 ? 'image' : 'file'"/></button>
@@ -296,7 +296,7 @@
 									<div class="is-row"><button class="is-button is-size-small is-variant-ghost" v-for="attachment in getAttachmentsForStep(step)" @click="showAttachment(attachment)"><icon :name="attachment.type && attachment.type.indexOf('image/') == 0 ? 'image' : 'file'"/></button></div>
 								</div>
 								<div v-else-if="result == manual && result.runType == 'manual' && !isCurrentManualStep(result,step) && !result.stopped && result.steps.length == 0">
-									<button class="is-button is-size-small" @click="runUntil(step)"><icon name="play" class="is-size-xxsmall"/><span class="is-text">Automatically run until here</span></button>
+									<button class="is-button is-size-small run-until-here" @click="runUntil(step)"><icon name="play" class="is-size-xxsmall"/><span class="is-text">Automatically run until here</span></button>
 								</div>
 								<n-absolute v-if="editingStep == step && manual == result" top="100%" left="0" :autoclose="true" @close="function() { editingStep = null }">
 									<n-form class="is-variant-vertical is-popup-form">

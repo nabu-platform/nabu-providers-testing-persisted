@@ -33,7 +33,7 @@
 		position: relative;
 	}
 	.is-popup-form {
-		background-color: $color-background;
+		background-color: white;
 		padding: $spacing-medium;
 		border: solid 1px $color-neutral-light;
 		min-width: 20rem;
@@ -119,7 +119,8 @@
 	.is-description-container:not(.is-disabled) {
 		border-left: solid 5px $color-primary-base;
 		border-right: solid 5px $color-primary-base;
-		background: linear-gradient(90deg, $color-primary-lightest 0%, lighten($color-primary-lightest, 5%) 50%, $color-primary-lightest 100%);
+		//background: linear-gradient(90deg, $color-primary-lightest 0%, lighten($color-primary-lightest, 5%) 50%, $color-primary-lightest 100%);
+		background: linear-gradient(90deg, $color-neutral-lightest 0%, lighten($color-neutral-lightest, 5%) 50%, $color-neutral-lightest 100%);
 	}
 	.is-description-container.is-disabled {
 		border-left: solid 5px $color-neutral-base;
