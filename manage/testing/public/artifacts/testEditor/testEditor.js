@@ -300,7 +300,7 @@ Vue.view("test-editor", {
 						}
 					}
 				}));
-				promises.push(this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStep.services.list", {testCaseId: this.testCaseId, orderBy: ["lineNumber"]}).then(function(x) {
+				promises.push(this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStep.services.list", {testCaseId: this.testCaseId, removed: false, orderBy: ["lineNumber"]}).then(function(x) {
 					self.steps.splice(0);
 					if (x && x.results) {
 						x.results.forEach(function(y) {
@@ -688,12 +688,15 @@ Vue.view("test-editor", {
 			
 			var utilityCounter = 1;
 			if (this.testCase.serviceContext || this.serviceContext) {
-				glue += "nabu.utils.Runtime.setServiceContext(\"" + (this.testCase.serviceContext ? this.testCase.serviceContext : this.serviceContext) + "\")\n\n"
+				glue += "nabu.utils.Runtime.setServiceContext(\"" + (this.testCase.serviceContext ? this.testCase.serviceContext : this.serviceContext) + "\")\n\n";
+			}
+			if (this.testCase && this.testCase.testIndex != null) {
+				glue += "nabu.utils.Runtime.setContext(\"testCaseIndex\", " + this.testCase.testIndex + ")\n\n";
 			}
 			if (this.testCase.features) {
 				this.testCase.features.split(/[\s]*,[\s]*/).forEach(function(feature) {
 					if (feature) {
-						glue += "nabu.utils.Runtime.toggleFeature(\"" + feature + "\", true)\n"
+						glue += "nabu.utils.Feature.toggle(\"" + feature + "\", true)\n"
 					}
 				});
 				glue += "\n";
@@ -1272,7 +1275,8 @@ Vue.view("test-editor", {
 				}
 			})
 		},
-		generateServiceCall: function(glue, method, step) {
+		// the rewriter can further finetune the service call
+		generateServiceCall: function(glue, method, step, rewriter) {
 			var self = this;
 			
 			var methodCall = "\n@id " + step.id + "\n"
@@ -1332,7 +1336,7 @@ Vue.view("test-editor", {
 						// a good example is masterdata, we want to set "nv" for "legalForm" rather than the id, especially for the matrix tests
 						// so we pick up on id-level bindings and run them through a resolver
 						// if we are mapping a uuid, wrap it in a resolver
-						if (target && target.format == "uuid" || (target.type == "array" && target.items && target.items.format == "uuid")) {
+						if (target && (target.format == "uuid" || (target.type == "array" && target.items && target.items.format == "uuid"))) {
 							binding = "nabu.providers.testing.persisted.services.resolveId(\"" + method + "\",\"" + key + "\", " + binding + ")/id";
 						}
 						
@@ -1372,7 +1376,11 @@ Vue.view("test-editor", {
 					}
 				});
 			}
-			methodCall += ")\n";
+			methodCall += ")";
+			if (rewriter) {
+				methodCall = rewriter(methodCall, step);
+			}
+			methodCall += "\n";
 			
 			glue += methodCall;
 			return glue;
@@ -1380,12 +1388,24 @@ Vue.view("test-editor", {
 		// TODO: in the future this can be pluggable?
 		preloadUtilities: function() {
 			var self = this;
+			var messageWriter = function(method, step) {
+				if (step.title) {
+					var current = method.substring(0, method.length - 1);
+					if (current.charAt(current.length - 1) != '(') {
+						current += ",";
+					}
+					return current + "message: \"" + step.title.replace(/"/g, "\\\"") + "\")";
+				}
+				else {
+					return method;
+				}
+			};
 			this.providedUtilities.push({
 				id: "standard:validate-equals",
 				title: "Validate equals",
 				description: "Check the actual value matches the expected value",
 				generator: function(glue, step) {
-					return self.generateServiceCall(glue, "test.validateEquals", step);
+					return self.generateServiceCall(glue, "test.validateEquals", step, messageRewriter);
 				},
 				tags: ["Validation"],
 				inputDefinition: JSON.stringify({
@@ -1414,7 +1434,7 @@ Vue.view("test-editor", {
 				title: "Validate not equals",
 				description: "Check that the actual value does not match an expected value ",
 				generator: function(glue, step) {
-					return self.generateServiceCall(glue, "test.validateNotEquals", step);
+					return self.generateServiceCall(glue, "test.validateNotEquals", step, messageRewriter);
 				},
 				tags: ["Validation"],
 				inputDefinition: JSON.stringify({

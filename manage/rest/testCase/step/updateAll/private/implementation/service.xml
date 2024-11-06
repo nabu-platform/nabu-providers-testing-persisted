@@ -79,25 +79,46 @@
 			</steps>
 		</steps>
 	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.For"
+			disabled="false"
+			id="f74ac7a8fa1a470eb090127a4db00d2d"
+			lineNumber="5"
+			variable="singleToDelete">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+				disabled="false"
+				id="59108d3a4296420f9ccc2b89cc384b89"
+				lineNumber="6">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="cb48c5d202e649f69a8d3939c269f609"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>true</from>
+				<to>singleToDelete/removed</to>
+			</steps>
+		</steps>
+		<query>toDelete</query>
+	</steps>
 	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
 			disabled="false"
 			id="e807d100fad64a97a2412d26387bc4b0"
 			label="toDelete"
-			lineNumber="5">
+			lineNumber="7">
 		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
 				disabled="false"
-				id="71f3ab0855c94592b10db5fe3f342365"
-				serviceId="nabu.services.jdbc.Services.delete"
-				resultName="result6de42b8b6c1b47c093bd580f70a1a588"
+				id="8dea6da3bb3e4dd59619a9481bf85ac5"
+				serviceId="nabu.services.jdbc.Services.update"
+				resultName="result15405a52bb6f4c93bce3036c42d2c237"
 				temporaryMapping="true"
-				x="80"
-				y="72"
+				x="233"
+				y="205"
 				invocationOrder="0"
 				asynchronous="false"
 				recache="false">
 			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 					disabled="false"
-					id="7a21ef5fed25406c81364836b712d07f"
+					id="fe0a84eabef44d6aa7f282d9d5e5dc58"
 					mask="false"
 					optional="false"
 					fixedValue="false">

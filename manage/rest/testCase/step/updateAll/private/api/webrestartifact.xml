@@ -12,6 +12,7 @@
     <lenient>true</lenient>
     <webApplicationId>false</webApplicationId>
     <geoPosition>false</geoPosition>
+    <useAsAuthorizationServiceContext>false</useAsAuthorizationServiceContext>
     <language>false</language>
     <allowFormBinding>false</allowFormBinding>
     <caseInsensitive>false</caseInsensitive>
@@ -25,10 +26,13 @@
     <allowRaw>false</allowRaw>
     <domain>false</domain>
     <origin>false</origin>
+    <scheme>false</scheme>
     <ignoreOffline>false</ignoreOffline>
     <allowRootArrays>false</allowRootArrays>
     <captureErrors>false</captureErrors>
     <captureSuccessful>false</captureSuccessful>
     <limitedToInterface>false</limitedToInterface>
     <allowExplicitResponseCode>false</allowExplicitResponseCode>
+    <stubbed>false</stubbed>
+    <clusterLock>false</clusterLock>
 </restInterface>

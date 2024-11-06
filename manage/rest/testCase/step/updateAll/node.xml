@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-15T12:38:51.289+02:00" lastModified="2023-06-15T12:45:59.634+02:00" leaf="true" version="10">
+<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2023-06-15T12:38:51.289+02:00" lastModified="2024-09-10T10:20:19.604+02:00" leaf="true" version="12">
     <environmentId>apollo</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
     <properties/>
     <references>nabu.providers.testing.persisted.crud.testCaseStep.services.list</references>
-    <references>nabu.services.jdbc.Services.delete</references>
+    <references>nabu.services.jdbc.Services.update</references>
     <references>nabu.services.jdbc.Services.merge</references>
     <references>nabu.providers.testing.persisted.crud.testCaseStep.types.output</references>
     <references>nabu.providers.testing.persisted.manage.rest.testCase.step.updateInput</references>

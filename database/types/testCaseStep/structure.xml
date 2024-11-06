@@ -14,4 +14,5 @@
     <field name="lineNumber" type="java.lang.Long"/>
     <field name="enabled" type="java.lang.Boolean"/>
     <field foreignKey="nabu.providers.testing.persisted.database.types.testCaseStepTemplate:id" minOccurs="0" name="testCaseStepTemplateId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    <field comment="Once removed, it will no longer be displayed or run" name="removed" type="java.lang.Boolean"/>
 </structure>

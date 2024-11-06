@@ -1,0 +1,6 @@
+<structure name="pipeline">
+    <structure name="input"/>
+    <structure name="output">
+        <field name="testCaseIndex" type="java.lang.Long"/>
+    </structure>
+</structure>

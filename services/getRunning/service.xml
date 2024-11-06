@@ -1,0 +1,40 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="7369b9258d4e4f3b8801ce07dd99f86c"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="3d3aced7e82848d89e039abcff645704"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="2c53bda8323a481097c4954606c99f55"
+				serviceId="nabu.utils.Runtime.getContext"
+				resultName="result8f44e77039ec4d8abd5088a52fb004a5"
+				temporaryMapping="true"
+				x="40"
+				y="36"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="d4deaae7912941f6bfcedfb67b8ff999"
+					mask="false"
+					optional="false"
+					fixedValue="true">
+				<from>testCaseIndex</from>
+				<to>key</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="912ecff25d654b75a6f7efa57953ee9f"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result8f44e77039ec4d8abd5088a52fb004a5/value</from>
+			<to>output/testCaseIndex</to>
+		</steps>
+	</steps>
+</sequence>
