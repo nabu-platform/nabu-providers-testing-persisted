@@ -12,6 +12,7 @@ Vue.view("test-editor", {
 	},
 	data: function() {
 		return {
+			selectedSteps: [],
 			autosave: false,
 			lastSaved: null,
 			lastSaveFailed: null,
@@ -91,6 +92,10 @@ Vue.view("test-editor", {
 		this.load().then(done, done);
 	},
 	methods: {
+		copySteps: function() {
+			nabu.utils.objects.copy(this.selectedSteps);
+			this.selectedSteps.splice(0);
+		},
 		saveTemplate: function(template) {
 			return this.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.update", {
 				id: template.id,
@@ -1205,6 +1210,28 @@ Vue.view("test-editor", {
 		},
 		paste: function(step, $event) {
 			console.log("pasted content");
+			try {
+				var content = (event.clipboardData || window.clipboardData).getData("text")
+				if (content != null) {
+					var parsed = JSON.parse(content);
+					console.log("pasted", parsed, step);
+					if (parsed instanceof Array) {
+						// generate new ids
+						parsed.forEach(function(single) {
+							single.id = crypto.randomUUID().replace(/-/g, "");
+						});
+						var currentIndex = this.steps.indexOf(step);
+						parsed.unshift(0);
+						parsed.unshift(currentIndex + 1);
+						this.steps.splice.apply(this.steps, parsed);
+					}
+				}
+				$event.stopPropagation();
+				$event.preventDefault();
+			}
+			catch {
+				// ignore
+			}
 		},
 		focus: function(index) {
 			var self = this;
@@ -1221,11 +1248,19 @@ Vue.view("test-editor", {
 			})
 		},
 		remove: function(step) {
-			var index = this.steps.indexOf(step);
-			if (index >= 0) {
-				this.steps.splice(index, 1);
+			// can't remove the last step!
+			if (this.steps.length >= 2) {
+				var index = this.steps.indexOf(step);
+				if (index >= 0) {
+					this.steps.splice(index, 1);
+				}
+				// deselect as well!
+				index = this.selectedSteps.indexOf(step);
+				if (index >= 0) {
+					this.selectedSteps.splice(index, 1);
+				}
+				this.debounceSave();
 			}
-			this.debounceSave();
 		},
 		moveVariable: function(variable, amount) {
 			var index = this.variables.indexOf(variable);
@@ -1405,7 +1440,7 @@ Vue.view("test-editor", {
 				title: "Validate equals",
 				description: "Check the actual value matches the expected value",
 				generator: function(glue, step) {
-					return self.generateServiceCall(glue, "test.validateEquals", step, messageRewriter);
+					return self.generateServiceCall(glue, "test.validateEquals", step, messageWriter);
 				},
 				tags: ["Validation"],
 				inputDefinition: JSON.stringify({
@@ -1434,7 +1469,7 @@ Vue.view("test-editor", {
 				title: "Validate not equals",
 				description: "Check that the actual value does not match an expected value ",
 				generator: function(glue, step) {
-					return self.generateServiceCall(glue, "test.validateNotEquals", step, messageRewriter);
+					return self.generateServiceCall(glue, "test.validateNotEquals", step, messageWriter);
 				},
 				tags: ["Validation"],
 				inputDefinition: JSON.stringify({

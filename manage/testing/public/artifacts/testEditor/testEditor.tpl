@@ -109,6 +109,7 @@
 					<li class="is-column" v-if="running"><button class="is-button is-size-small is-variant-danger"><icon name="cog"/><span class="is-text">Running...</span></button></li>
 					<li class="is-column" v-if="lastSaved"><button class="is-button is-size-small" ref="lastSaved"><icon name="save"/><span class="is-text">Last saved: {{$services.formatter.date(lastSaved, 'HH:mm:ss')}}</span></button></li>
 					<li class="is-column" v-if="lastSaveFailed"><button class="is-button is-size-small is-variant-danger-outline"><icon name="save"/><span class="is-text">Last save failed: {{$services.formatter.date(lastSaveFailed, 'HH:mm:ss')}}</span></button></li>
+					<li class="is-column" v-if="selectedSteps.length > 0"><button class="is-button is-size-small is-variant-primary-outline" @click="copySteps"><icon name="copy"/><span class="is-text">Copy</span></button></li>
 				</ul>
 				<n-form-switch v-model="showAutomation" label="Show automation"/>
 				<n-form-switch v-model="autosave" label="Autosave"/>
@@ -135,6 +136,7 @@
 					</thead>
 					<tbody>
 						<tr v-for="(step, index) in steps" v-show="isVisibleStep(step)" :key="step.id" class="step" :class="{'is-disabled': !step.enabled}">
+							<td class="is-border-none"><n-form-checkbox v-model="selectedSteps" :item="step"/></td>
 							<td class="is-border-none"><div class="is-column"><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, -1)"><icon name="chevron-up"/></button><button class="is-button is-size-xsmall is-variant-ghost" @click="move(step, 1)"><icon name="chevron-down"/></button></div></td>
 							<td><div class="is-row is-spacing-small is-align-center"><button class="is-button is-variant-ghost is-size-xsmall" @click="addAfter(index)"><icon name="plus"/></button><span class="is-text is-line-number">{{formatLineNumber(index)}}</span><n-form-switch class="is-size-small" v-model="step.enabled" @input="debounceSave"/><button class="is-button is-variant-ghost is-size-xsmall" @click="remove(step)"><icon class="is-color-danger-outline" name="times"/></button></div></td>
 							<td :class="{'is-disabled': !step.enabled}" class="is-description-container">
@@ -185,7 +187,8 @@
 								@input="resizeText(step, $event)" 
 								ref="automationEditors"/></td>
 							<td v-if="showAutomation">
-								<n-form-combo v-model="step.scriptType" label="Type"
+								<n-form-combo combo-type="n-input-combo2" v-model="step.scriptType" label="Type"
+									:key="'type-' + step.id"
 									class="is-variant-test-editor-automation-type is-label-horizontal"
 									:items="[{name: 'service', label: 'Service'}, {name: 'glue-utility', label: 'Glue Utility'}, {name: 'glue-script', label: 'Glue Script'}, {name: 'selenium-utility', label: 'Selenium Utility'}, {name: 'selenium-script', label: 'Selenium Script'}]"
 									:formatter="function(x) { return x.label }"
@@ -197,6 +200,8 @@
 								<div class="is-column is-spacing-gap-small" v-if="step.scriptType">
 									<div class="is-row is-spacing-gap-small is-align-cross-center">
 										<n-form-combo 
+											:key="'service-' + step.id"
+										 	combo-type="n-input-combo2"
 											v-if="step.scriptType == 'service'"
 											:value="step.script"
 											label="Service"
@@ -212,6 +217,8 @@
 										<n-form-text class="is-fill-normal is-small-area" type="area" v-else-if="step.scriptType == 'selenium-script'" v-model="step.script" @input="function(value) { generateSeleniumInterface(step, value);debounceSave() }" />
 										<n-form-text class="is-fill-normal is-small-area" type="area" v-else-if="step.scriptType == 'glue-script'" v-model="step.script" @input="function(value) { generateGlueInterface(step, value);debounceSave() }" />
 										<n-form-combo 
+											:key="'selenium-utility-' + step.id"
+											combo-type="n-input-combo2"
 											v-if="step.scriptType == 'selenium-utility'"
 											v-model="step.script"
 											label="Selenium Utility"
@@ -224,6 +231,8 @@
 											@input="debounceSave"
 											/>
 										<n-form-combo 
+											:key="'glue-utility-' + step.id"
+											combo-type="n-input-combo2"
 											v-if="step.scriptType == 'glue-utility'"
 											v-model="step.script"
 											label="Utility"
@@ -252,7 +261,7 @@
 													:allow-computed="false"
 													:plain="true"
 													:from="getPipeline(step)" 
-													:key="'step-input-mapper-' + index"
+													:key="'step-input-mapper-' + step.id"
 													v-model="step.inputBindingsObject"
 													@changed="debounceSave"
 													/>

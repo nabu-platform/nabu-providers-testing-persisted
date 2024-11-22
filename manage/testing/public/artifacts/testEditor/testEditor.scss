@@ -201,8 +201,8 @@
 		border: solid 1px $color-neutral-light;
 		border-right: none;
 		background-color: $color-neutral-lighter;
-		border-top-left-radius: $border-radius;
-		border-bottom-left-radius: $border-radius;
+		border-top-left-radius: $border-radius-default;
+		border-bottom-left-radius: $border-radius-default;
 		white-space: nowrap;
 	}
 	.is-content.is-variant-subscript {

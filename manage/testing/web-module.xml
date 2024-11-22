@@ -9,4 +9,5 @@
     <webFragments>nabu.providers.testing.persisted.manage.rest.testCase.attachment.upload</webFragments>
     <webFragments>nabu.providers.testing.persisted.manage.rest.testCase.attachment.stream</webFragments>
     <webFragments>nabu.providers.testing.persisted.manage.rest.testCase.attachment.delete</webFragments>
+    <audience>MANAGER</audience>
 </webModule>

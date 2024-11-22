@@ -9,4 +9,5 @@
     <webFragments>nabu.providers.testing.persisted.crud.testCaseStep</webFragments>
     <webFragments>nabu.providers.testing.persisted.crud.testCaseAttachment</webFragments>
     <webFragments>nabu.providers.testing.persisted.crud.testCaseStepTemplate</webFragments>
+    <audience>MANAGER</audience>
 </webModule>
