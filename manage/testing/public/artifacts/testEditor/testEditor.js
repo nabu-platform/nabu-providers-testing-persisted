@@ -34,6 +34,7 @@ Vue.view("test-editor", {
 			// the paging of the result sets
 			resultPaging: {},
 			testCase: null,
+			testProject: null,
 			// when running manually, store results here
 			manual: null,
 			manualStart: null,
@@ -355,6 +356,11 @@ Vue.view("test-editor", {
 					childPromises.push(self.$services.swagger.execute("nabu.providers.testing.persisted.crud.testCaseStepTemplate.services.list", { testProjectId: self.testCase.testProjectId }).then(function(result) {
 						if (result && result.results) {
 							nabu.utils.arrays.merge(self.templates, result.results);
+						}
+					}));
+					childPromises.push(self.$services.swagger.execute("nabu.providers.testing.persisted.crud.testProject.services.get", { id: self.testCase.testProjectId }).then(function(result) {
+						if (result && result.results) {
+							Vue.set(self, "testProject", result);
 						}
 					}));
 					self.$services.q.all(childPromises).then(function(result) {
@@ -967,13 +973,16 @@ Vue.view("test-editor", {
 			Vue.set(step, "script", service ? service.id : null);
 			Vue.set(step, "inputDefinition", service ? service.inputDefinition : null);
 			Vue.set(step, "outputDefinition", service ? service.outputDefinition : null);
+			if (service) {
+				this.serviceDefinitions[service.id] = service;
+			}
 			this.debounceSave();
 		},
 		getServiceInformation: function(service) {
 			return this.serviceDefinitions[service];	
 		},
 		resolveService: function(service) {
-			console.log("resolving", service, this.serviceDefinitions[service]);
+			console.log("resolving", service, this.serviceDefinitions);
 			return this.serviceDefinitions[service];	
 		},
 		suggestUtilities: function(value) {
@@ -982,10 +991,24 @@ Vue.view("test-editor", {
 			nabu.utils.arrays.merge(combined, this.templates.filter(function(x) {
 				return x.scriptType == "glue-utility";
 			}));
-			console.log("combined is", combined);
 			return combined.filter(function(x) {
 				return !value || (x.title && x.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) || (x.description && x.description.toLowerCase().indexOf(value.toLowerCase()) >= 0);
 			});
+		},
+		resolveSeleniumUtility: function(utilityId) {
+			return this.templates.filter(function(x) {
+				return x.scriptType == "selenium-utility" && x.id == utilityId;
+			})[0];
+		},
+		resolveGlueUtility: function(utilityId) {
+			var combined = [];
+			nabu.utils.arrays.merge(combined, this.providedUtilities);
+			nabu.utils.arrays.merge(combined, this.templates.filter(function(x) {
+				return x.scriptType == "glue-utility";
+			}));
+			return combined.filter(function(x) {
+				return x.id == utilityId;
+			})[0];
 		},
 		suggestSeleniumUtilities: function(value) {
 			return this.templates.filter(function(x) {
@@ -996,8 +1019,15 @@ Vue.view("test-editor", {
 		},
 		suggestServices: function(value, label) {
 			var self = this;
+			var utilityFolderId = this.testCase.utilityFolderId;
+			if (utilityFolderId == null) {
+				utilityFolderId = this.testProject.utilityFolderId;
+			}
+			if (utilityFolderId == null) {
+				utilityFolderId = this.utilityFolderId;	
+			}
 			return this.$services.swagger.execute("nabu.providers.testing.persisted.manage.rest.service.list", {
-				folderId: this.showAllServices ? null : (this.testCase && this.testCase.utilityFolderId ? this.testCase.utilityFolderId : this.utilityFolderId),
+				folderId: this.showAllServices ? null : utilityFolderId,
 				q: value, 
 				limit: 20, 
 				offset: 0, 

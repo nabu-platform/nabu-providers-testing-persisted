@@ -119,6 +119,7 @@
 					<thead>
 						<tr>
 							<th class="is-border-none"></th>
+							<th class="is-border-none"></th>
 							<th title="line number"></th>
 							<th class="is-description-container"><div class="is-row is-spacing-gap-small"><span class="is-text">{{testCase && testCase.title ? testCase.title : "Description"}}</span><span class="is-badge is-position-right" v-if="resultPaging.totalRowCount">{{resultPaging.totalRowCount}} runs</span></div></th>
 							<th v-if="showAutomation"><div class="is-row is-spacing-gap-medium is-align-cross-center"><span class="is-text">Type</span></div></th>
@@ -225,6 +226,7 @@
 											class="is-variant-test-editor-services is-label-horizontal"
 											:timeout="600"
 											:pretty-formatter="serviceFormatter"
+											:resolver="resolveSeleniumUtility"
 											:filter="suggestSeleniumUtilities"
 											:formatter="function(x) { return x.title ? x.title : 'Untitled' }"
 											:extracter="function(x) { return x.id }"
@@ -239,6 +241,7 @@
 											class="is-variant-test-editor-services is-label-horizontal"
 											:timeout="600"
 											:filter="suggestUtilities"
+											:resolver="resolveGlueUtility"
 											:pretty-formatter="serviceFormatter"
 											:formatter="function(x) { return x.title ? x.title : 'Untitled' }"
 											:extracter="function(x) { return x.id }"

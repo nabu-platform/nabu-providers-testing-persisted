@@ -17,4 +17,5 @@
     <field minOccurs="0" name="totalRowCount" type="java.lang.Long"/>
     <field maxOccurs="unbounded" minOccurs="0" name="parts" type="java.lang.String"/>
     <field minOccurs="0" name="expectedAmount" type="java.lang.Integer"/>
+    <field maxOccurs="unbounded" minOccurs="0" name="masterDataNames" type="java.lang.String"/>
 </structure>
