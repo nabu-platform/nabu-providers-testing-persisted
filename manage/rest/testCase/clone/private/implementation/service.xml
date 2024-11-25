@@ -1,0 +1,31 @@
+<sequence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		disabled="false"
+		id="a8440772baf84f949e720d933ae1afd3"
+		lineNumber="1">
+	<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+			disabled="false"
+			id="872cf7fb341a456cb99380323f09455e"
+			lineNumber="2">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="39c039682bab4fbfb31413fb2d5c7a98"
+				serviceId="nabu.providers.testing.persisted.services.testCase.clone"
+				resultName="result50fc6cedec5f4081b119d4c38ccf3d51"
+				temporaryMapping="true"
+				x="268"
+				y="133"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="7e4d1cddf3074228a59cf20b7c49a547"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/path/testCaseId</from>
+				<to>testCaseId</to>
+			</steps>
+		</steps>
+	</steps>
+</sequence>

@@ -1,0 +1,13 @@
+<structure name="pipeline">
+    <structure name="input">
+        <field name="testCaseId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    </structure>
+    <structure name="output">
+        <field name="newTestCaseId" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+    </structure>
+    <structure collectionName="testCases" definition="nabu.providers.testing.persisted.crud.testCase.types.output" enricher="nabu.providers.testing.persisted.crud.testCase.services.list" name="testCase" persister="nabu.providers.testing.persisted.crud.testCase.batch.updateAll"/>
+    <structure collectionName="testCaseAttachments" definition="nabu.providers.testing.persisted.crud.testCaseAttachment.types.output" enricher="nabu.providers.testing.persisted.crud.testCaseAttachment.services.list" maxOccurs="unbounded" minOccurs="0" name="attachments" persister="nabu.providers.testing.persisted.crud.testCaseAttachment.batch.updateAll"/>
+    <structure collectionName="testCaseSteps" definition="nabu.providers.testing.persisted.crud.testCaseStep.types.output" enricher="nabu.providers.testing.persisted.crud.testCaseStep.services.list" maxOccurs="unbounded" minOccurs="0" name="steps" persister="nabu.providers.testing.persisted.crud.testCaseStep.batch.updateAll"/>
+    <structure collectionHandler="stringMap" definition="java.util.Map" minOccurs="0" name="stepMap"/>
+    <field minOccurs="0" name="uuid" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|[0-9a-fA-F]{32}" type="java.util.UUID"/>
+</structure>

@@ -1,0 +1,2 @@
+Currently we assume you are copying within the same test project.
+Otherwise we would need to revisit how templates are used cross project!
