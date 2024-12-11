@@ -42,7 +42,7 @@
 				<thead>
 					<tr>
 						<th class="is-border-none"></th>
-						<th v-for="(variable, variableIndex) in variables"><div class="is-row is-wrap-none is-align-center"><div class="is-row is-spacing-gap-small" v-if="!variableUsed(variable)"><n-form-text v-model="variable.name" placeholder="camelCase variable name" /><button class="is-button is-variant-ghost is-size-xsmall" @click="variables.splice(variableIndex)"><icon name="times"/></button></div><span v-else>{{variable.name}}</span>
+						<th v-for="(variable, variableIndex) in variables"><div class="is-row is-wrap-none is-align-center"><div class="is-row is-spacing-gap-small" v-if="!variableUsed(variable)"><n-form-text v-model="variable.name" placeholder="camelCase variable name" /><button class="is-button is-variant-ghost is-size-xsmall" @click="variables.splice(variableIndex, 1)"><icon name="times"/></button></div><span v-else>{{variable.name}}</span>
 							<button class="is-button is-variant-ghost is-size-xxsmall" @click="moveVariable(variable, -1)"><icon name="chevron-left"/></button>
 							<button class="is-button is-variant-ghost is-size-xxsmall" @click="moveVariable(variable, 1)"><icon name="chevron-right"/></button>
 						</div></th>

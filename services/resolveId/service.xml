@@ -354,20 +354,11 @@
 					serviceId="nabu.utils.String.split"
 					resultName="resultfdcfae7d6a9a46f2bce0bffe72c457e1"
 					temporaryMapping="true"
-					x="89"
-					y="70"
-					invocationOrder="0"
+					x="295"
+					y="63"
+					invocationOrder="1"
 					asynchronous="false"
 					recache="false">
-				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
-						disabled="false"
-						id="3fe15511a4774f5f9570ddf45b2bad3a"
-						mask="false"
-						optional="false"
-						fixedValue="false">
-					<from>single</from>
-					<to>string</to>
-				</steps>
 				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
 						disabled="false"
 						id="87926211f99e4863b48d35c0d35ee504"
@@ -376,6 +367,15 @@
 						fixedValue="true">
 					<from>[\s]*,[\s]*</from>
 					<to>separator</to>
+				</steps>
+				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+						disabled="false"
+						id="92eaa5799fd84eb9a6bbfef2f79f11a5"
+						mask="false"
+						optional="false"
+						fixedValue="false">
+					<from>result52823c4d3a6649609771c9e74a2b34ce/trimmed</from>
+					<to>string</to>
 				</steps>
 			</steps>
 			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
@@ -386,6 +386,27 @@
 					fixedValue="false">
 				<from>resultfdcfae7d6a9a46f2bce0bffe72c457e1/parts</from>
 				<to>parts</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+					disabled="false"
+					id="f2f3ac2092194c7482682a63ed7c5c6c"
+					serviceId="nabu.utils.String.trim"
+					resultName="result52823c4d3a6649609771c9e74a2b34ce"
+					temporaryMapping="true"
+					x="72"
+					y="233"
+					invocationOrder="0"
+					asynchronous="false"
+					recache="false">
+				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+						disabled="false"
+						id="43362e965c4849dea02200ad51f53ec1"
+						mask="false"
+						optional="false"
+						fixedValue="false">
+					<from>single</from>
+					<to>string</to>
+				</steps>
 			</steps>
 		</steps>
 		<steps xsi:type="be.nabu.libs.services.vm.step.Throw"

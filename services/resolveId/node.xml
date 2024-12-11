@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.services.vm.VMServiceManager" created="2023-06-27T17:54:47.122+02:00" lastModified="2024-11-22T17:51:59.832+01:00" leaf="true" version="42">
+<node artifactManager="be.nabu.eai.module.services.vm.VMServiceManager" created="2023-06-27T17:54:47.122+02:00" lastModified="2024-12-09T11:27:05.761+01:00" leaf="true" version="44">
     <environmentId>ares</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
     <properties/>
     <references>nabu.utils.List.add</references>
+    <references>nabu.utils.String.trim</references>
     <references>nabu.cms.core.services.masterdata.entry.guessEntries</references>
     <references>nabu.utils.reflection.Type.of</references>
     <references>nabu.utils.types.ParameterDescription</references>
