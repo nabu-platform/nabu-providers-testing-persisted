@@ -1,8 +1,9 @@
 <structure interface="nabu.providers.testing.persisted.manage.rest.testCase.instance.merge:api" name="pipeline">
     <structure name="input"/>
     <structure name="output"/>
-    <structure collectionName="testCaseInstances" definition="nabu.providers.testing.persisted.crud.testCaseInstance.types.output" name="instance"/>
-    <structure collectionName="testCaseInstanceSteps" definition="nabu.providers.testing.persisted.crud.testCaseInstanceStep.types.output" maxOccurs="unbounded" minOccurs="0" name="existing"/>
-    <structure collectionName="testCaseInstanceSteps" definition="nabu.providers.testing.persisted.crud.testCaseInstanceStep.types.output" minOccurs="0" name="current"/>
-    <structure collectionName="testCaseInstanceAttachments" definition="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.types.output" maxOccurs="unbounded" minOccurs="0" name="existingAttachments"/>
+    <structure collectionName="testCaseInstances" definition="nabu.providers.testing.persisted.crud.testCaseInstance.types.output" enricher="nabu.providers.testing.persisted.crud.testCaseInstance.services.list" name="instance" persister="nabu.providers.testing.persisted.crud.testCaseInstance.batch.updateAll"/>
+    <structure collectionName="testCaseInstanceSteps" definition="nabu.providers.testing.persisted.crud.testCaseInstanceStep.types.output" enricher="nabu.providers.testing.persisted.crud.testCaseInstanceStep.services.list" maxOccurs="unbounded" minOccurs="0" name="existing" persister="nabu.providers.testing.persisted.crud.testCaseInstanceStep.batch.updateAll"/>
+    <structure collectionName="testCaseInstanceSteps" definition="nabu.providers.testing.persisted.crud.testCaseInstanceStep.types.output" enricher="nabu.providers.testing.persisted.crud.testCaseInstanceStep.services.list" minOccurs="0" name="current" persister="nabu.providers.testing.persisted.crud.testCaseInstanceStep.batch.updateAll"/>
+    <structure collectionName="testCaseInstanceAttachments" definition="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.types.output" enricher="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.services.list" maxOccurs="unbounded" minOccurs="0" name="existingAttachments" persister="nabu.providers.testing.persisted.crud.testCaseInstanceAttachment.batch.updateAll"/>
+    <structure collectionName="testCaseInstanceValidations" definition="nabu.providers.testing.persisted.crud.testCaseInstanceValidation.types.output" enricher="nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.list" maxOccurs="unbounded" minOccurs="0" name="existingValidations" persister="nabu.providers.testing.persisted.crud.testCaseInstanceValidation.batch.updateAll"/>
 </structure>

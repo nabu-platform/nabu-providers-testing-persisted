@@ -8,6 +8,8 @@
     <useWebApplicationAsPermissionContext>false</useWebApplicationAsPermissionContext>
     <useProjectAsPermissionContext>false</useProjectAsPermissionContext>
     <useGlobalPermissionContext>true</useGlobalPermissionContext>
+    <input>nabu.providers.testing.persisted.manage.rest.testCase.cloneInput</input>
+    <deviceBestEffort>false</deviceBestEffort>
     <lenient>true</lenient>
     <webApplicationId>false</webApplicationId>
     <geoPosition>false</geoPosition>

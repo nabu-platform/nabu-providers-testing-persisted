@@ -1,0 +1,4 @@
+<structure name="cloneInput">
+    <field comment="The title for the cloned testcase" minOccurs="0" name="title" type="java.lang.String"/>
+    <field minOccurs="0" name="description" type="java.lang.String"/>
+</structure>

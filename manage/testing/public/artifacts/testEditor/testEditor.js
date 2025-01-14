@@ -359,7 +359,7 @@ Vue.view("test-editor", {
 						}
 					}));
 					childPromises.push(self.$services.swagger.execute("nabu.providers.testing.persisted.crud.testProject.services.get", { id: self.testCase.testProjectId }).then(function(result) {
-						if (result && result.results) {
+						if (result) {
 							Vue.set(self, "testProject", result);
 						}
 					}));

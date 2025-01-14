@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2024-11-25T13:49:36.599+01:00" lastModified="2024-11-25T13:50:32.338+01:00" leaf="true" version="6">
+<node artifactManager="be.nabu.eai.module.rest.provider.RESTServiceManager" created="2024-11-25T13:49:36.599+01:00" lastModified="2025-01-09T10:18:13.809+01:00" leaf="true" version="8">
     <environmentId>ares</environmentId>
     <hidden>false</hidden>
     <locked>false</locked>
     <properties/>
-    <references>java.util.UUID</references>
+    <references>nabu.providers.testing.persisted.manage.rest.testCase.cloneInput</references>
     <references>nabu.providers.testing.persisted.services.testCase.clone</references>
 </node>

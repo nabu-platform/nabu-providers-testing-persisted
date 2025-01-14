@@ -268,6 +268,36 @@
 			<from>result78e9564471334256aca65041342175f7/results</from>
 			<to>existingAttachments</to>
 		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+				disabled="false"
+				id="de1a43b5bfee46728af86aa5a8f4035d"
+				serviceId="nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.list"
+				resultName="result33eab1b939604818ba9bf21478a74880"
+				temporaryMapping="true"
+				x="169"
+				y="311"
+				invocationOrder="0"
+				asynchronous="false"
+				recache="false">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="bb0454fbe4864ec58fd5f6bfbfa5d831"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>instance/id</from>
+				<to>filter/testCaseInstanceId[0]</to>
+			</steps>
+		</steps>
+		<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+				disabled="false"
+				id="c60e7af3cbd54961b60a41692842f927"
+				mask="false"
+				optional="false"
+				fixedValue="false">
+			<from>result33eab1b939604818ba9bf21478a74880/results</from>
+			<to>existingValidations</to>
+		</steps>
 	</steps>
 	<steps xsi:type="be.nabu.libs.services.vm.step.For"
 			disabled="false"
@@ -577,5 +607,71 @@
 			</steps>
 		</steps>
 		<query>existingAttachments[id !# /input/content/attachments/id]</query>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.For"
+			disabled="false"
+			id="9e654beae0a84e5a900b3bb539c8b8fd"
+			lineNumber="18"
+			variable="newValidation">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+				disabled="false"
+				id="87cfcbda8fed47e69cef42d59c8b05ae"
+				lineNumber="19">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+					disabled="false"
+					id="56a8fecbe0834ba5896107c4f9917afe"
+					serviceId="nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.create"
+					resultName="result29836b65657f43d485c8e06ec8edc771"
+					temporaryMapping="true"
+					x="249"
+					y="50"
+					invocationOrder="0"
+					asynchronous="false"
+					recache="false">
+				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+						disabled="false"
+						id="b4798ebb6bf740e3acbc6125271f019a"
+						mask="false"
+						optional="false"
+						fixedValue="false">
+					<from>newValidation</from>
+					<to>instance</to>
+				</steps>
+			</steps>
+		</steps>
+		<query>input/content/validations[id !# /existingValidations/id]</query>
+	</steps>
+	<steps xsi:type="be.nabu.libs.services.vm.step.For"
+			disabled="false"
+			id="464c40172c0544fc9e15cd022d8bd489"
+			lineNumber="20"
+			variable="toDelete">
+		<steps xsi:type="be.nabu.libs.services.vm.step.Map"
+				disabled="false"
+				id="1a1644d198cb4e6092d438f22b0eefac"
+				lineNumber="21">
+			<steps xsi:type="be.nabu.libs.services.vm.step.Invoke"
+					disabled="false"
+					id="61d025d4815e42bb879e6b5258d38ca1"
+					serviceId="nabu.providers.testing.persisted.crud.testCaseInstanceValidation.services.delete"
+					resultName="resultbd087abfee1e40d19a7cac8517a07cca"
+					temporaryMapping="true"
+					x="169"
+					y="71"
+					invocationOrder="0"
+					asynchronous="false"
+					recache="false">
+				<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+						disabled="false"
+						id="b685c67ec52447e0af8456c08d16a359"
+						mask="false"
+						optional="false"
+						fixedValue="false">
+					<from>toDelete/id</from>
+					<to>id</to>
+				</steps>
+			</steps>
+		</steps>
+		<query>existingValidations[id !# /input/content/validations/id]</query>
 	</steps>
 </sequence>

@@ -26,6 +26,24 @@
 				<from>input/path/testCaseId</from>
 				<to>testCaseId</to>
 			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="3b9f3315398e4d608385a911bd22d955"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content/title</from>
+				<to>newTitle</to>
+			</steps>
+			<steps xsi:type="be.nabu.libs.services.vm.step.Link"
+					disabled="false"
+					id="d77663246b514f18938e113398dea3f4"
+					mask="false"
+					optional="false"
+					fixedValue="false">
+				<from>input/content/description</from>
+				<to>newDescription</to>
+			</steps>
 		</steps>
 	</steps>
 </sequence>
