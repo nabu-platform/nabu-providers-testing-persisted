@@ -466,10 +466,10 @@ Vue.view("test-editor", {
 		uploadStepAttachments: function(step) {
 			var self = this;
 			var attachmentsToProcess = this.editingAttachments.splice(0);
-			attachmentsToUpload = attachmentsToProcess.filter(function(x) {
+			var attachmentsToUpload = attachmentsToProcess.filter(function(x) {
 				return self.attachments.indexOf(x) < 0;
 			});
-			attachmentsToRemove = this.attachments.filter(function(attachment) {
+			var attachmentsToRemove = this.attachments.filter(function(attachment) {
 				return attachment.testCaseStepId == step.id
 			}).filter(function(x) {
 				return attachmentsToProcess.indexOf(x) < 0;
