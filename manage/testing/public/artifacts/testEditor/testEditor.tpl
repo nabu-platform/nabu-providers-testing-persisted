@@ -171,12 +171,14 @@
 									<n-form-text v-model="step.summary" type="area" label="Summary" placeholder="Add some more information about this step in markdown syntax" :timeout="600" @input="debounceSave"/>
 									<n-form-text v-model="step.description" type="area" label="Notes" placeholder="Add some notes for people running this step manually using markdown syntax" :timeout="600" @input="debounceSave"/>
 									<n-input-file ref='form'
+										:disabled="unsavedSteps.indexOf(step.id) >= 0"
 										:value='editingAttachments'
 										browse-label="Browse or drag files"
 										browse-icon="plus"
 										:visualize-file-names="true"
 										class="is-column"
 										/>
+									<p v-if="unsavedSteps.indexOf(step.id) >= 0">Save before uploading a file</p>
 								</n-form>
 							</n-absolute></td>
 							<td v-if="showAutomation && step.scriptType == 'glue'"><textarea 
@@ -315,12 +317,14 @@
 										<n-form-text type="area" label="Comment" v-model="editingStepContent.comment" v-focus />
 										<n-form-text v-model="editingStepContent.issueId" label="Bug tracker issue id" />
 										<n-input-file ref='form'
+											:disabled='unsavedSteps.indexOf(step.id) >= 0'
 											:value='editingAttachments'
 											browse-label="Browse or drag files"
 											browse-icon="plus"
 											:visualize-file-names="true"
 											class="is-column"
 											/>
+										<p v-if="unsavedSteps.indexOf(step.id) >= 0">Save before uploading a file</p>
 									</n-form>
 								</n-absolute>
 							</td>

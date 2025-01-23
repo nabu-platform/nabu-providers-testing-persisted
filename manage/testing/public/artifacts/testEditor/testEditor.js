@@ -12,6 +12,7 @@ Vue.view("test-editor", {
 	},
 	data: function() {
 		return {
+			unsavedSteps: [],
 			selectedSteps: [],
 			autosave: false,
 			lastSaved: null,
@@ -421,6 +422,7 @@ Vue.view("test-editor", {
 			return this.$services.q.all(promises).then(function() {
 				self.lastSaveFailed = null;
 				self.lastSaved = new Date();
+				self.unsavedSteps.splice(0);
 			}, function() {
 				self.lastSaveFailed = new Date();
 			});
@@ -1160,7 +1162,7 @@ Vue.view("test-editor", {
 			return index;
 		},
 		newStep: function() {
-			return this.preprocess({
+			var step = {
 				description: "",
 				automate: false,
 				script: "",
@@ -1175,7 +1177,9 @@ Vue.view("test-editor", {
 				outputDefinition: null,
 				testCaseId: this.testCaseId,
 				enabled: true
-			});
+			};
+			this.unsavedSteps.push(step.id);
+			return this.preprocess(step);
 		},
 		addAfter: function(index) {
 			// always set to expanded if you add something!
